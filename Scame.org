@@ -1,0 +1,507 @@
+#+TITLE:  Scame.el
+#+AUTHOR: Felix Dumbeck <felix@dumbeck.net>
+#+LICENSE: LGPLv3+
+#+STARTUP: fold
+#+auto_tangle: t
+
+simple configurable agreeable modular emacsd
+unless you load external-packages.el only built in emacs functions will be used, leading to a very responsive but powerfull experience
+#+begin_example
+Simple       -  easy to use and read, it’s just setting varaibles and calling functions
+Configurable -  everything can be overwritten
+Agreeable    -  settings that are up to taste (e.g. font, theme) are left for the user to configure
+Modular      -  functionality is split up into different files, that can be loaded separatly from each other
+Emacs        -  you know what it is
+#+end_example
+
+* how to use
+clone the package and put this in the beginning of your init.el
+#+begin_src emacs-lisp :tangle no
+  (load "~/scame/scame.el" nil t)
+#+end_src
+you can also just load individual modules. they are named the same as the first level headings in this file e.g.
+#+begin_src emacs-lisp :tangle no
+  (load "~/scame/keybindings.el" nil t)
+#+end_src
+
+* scame.el
+load this file to load all modules below
+:PROPERTIES:
+:header-args: :tangle scame.el :results silent :mkdirp yes
+:END:
+#+begin_src emacs-lisp
+  ;;; scame.el --- simiple configurable agreeable modular emacs  -*- lexical-binding: t; -*-
+
+  ;; Copyright (C) 2025  Felix Dumbeck
+
+  ;; Author: Felix Dumbeck <felix@dumbeck.net>
+
+  ;; This program is free software; you can redistribute it and/or modify
+  ;; it under the terms of the GNU General Public License as published by
+  ;; the Free Software Foundation, either version 3 of the License, or
+  ;; (at your option) any later version.
+
+  ;; This program is distributed in the hope that it will be useful,
+  ;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ;; GNU General Public License for more details.
+
+  ;; You should have received a copy of the GNU General Public License
+  ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+  (provide 'scame)
+
+  (add-to-list 'load-path (file-name-directory (or load-file-name buffer-file-name)))
+
+  (load "keybindings.el" nil t)
+  (load "org-mode.el" nil t)
+  (load "startup.el" nil t)
+  (load "user-interface.el" nil t)
+  (load "completion.el" nil t)
+  (load "var.el" nil t)
+  (load "dired-settings.el" nil t)
+  (load "editor-config.el" nil t)
+#+end_src
+
+* startup
+:PROPERTIES:
+:header-args: :tangle startup.el :results silent :mkdirp yes
+:END:
+** increase startup performance
+make garbage-collection less active by increasing its threshold during startup so Emacs starts up faster
+#+begin_src emacs-lisp
+  (setq gc-cons-threshold (* 50 1000 1000))      ;500mb
+  (setq read-process-output-max (* 2 1024 1024)) ; 2mb
+#+end_src
+** runtime performance
+make garbage-collection pauses faster by decreasing the threshold, increasing the runtime performance
+#+begin_src emacs-lisp
+  (add-hook 'after-init-hook #'(lambda ()
+                                 (setq gc-cons-threshold (* 10 1000 1000)))) ;10mb
+#+end_src
+** set startup screen to *scratch* buffer
+#+begin_src emacs-lisp
+  (setq inhibit-startup-screen t)
+  (setq initial-scratch-message "")	; make *scratch* buffer blank
+#+end_src
+** change location of the custom file
+prevent Emacs from adding custom settings to init.el and choose =custom.el= instead
+#+begin_src emacs-lisp
+  (setq custom-file (locate-user-emacs-file "custom.el"))
+  (load custom-file 'noerror 'nomessage)
+#+end_src
+** auto generated files in tmp directory
+*** keep backup files in a temporary directory
+#+begin_src emacs-lisp
+  (setq backup-dir (expand-file-name "tmp/backups/" user-emacs-directory))
+  (setq backup-directory-alist `(("." . , backup-dir)))
+  (setq delete-old-versions t)
+#+end_src
+*** keep auto-save files in a temporary directory
+#+begin_src emacs-lisp
+  (make-directory (expand-file-name "tmp/auto-saves/" user-emacs-directory) t)
+  (setq auto-save-list-file-prefix (expand-file-name "tmp/auto-saves/sessions/" user-emacs-directory)
+        auto-save-file-name-transforms `((".*", (expand-file-name "tmp/auto-saves/" user-emacs-directory) t)))
+#+end_src
+* user interface
+:PROPERTIES:
+:header-args: :tangle user-interface.el :results silent :mkdirp yes
+:END:
+** disable bars
+#+begin_src emacs-lisp
+  (menu-bar-mode 0)
+  (tool-bar-mode 0)
+  (scroll-bar-mode 0)
+#+end_src
+** general
+#+begin_src emacs-lisp
+  (global-visual-line-mode 1)
+  ;; (setq visual-wrap-prefix "⇢ ") ;; choose a visible symbol
+  ;; (global-visual-wrap-prefix-mode 1)
+
+  (global-visual-line-mode t)
+  (setq-default cursor-type 'bar)	 ;use bar as cursor
+  (setq visible-bell t)		 ;flash screen instead of ringing bell
+  (global-display-line-numbers-mode t)	;display line numbers
+  (global-hl-line-mode t)			;highlight current line
+  (setq project-mode-line t)		;show current project name is mode line
+  (setq use-dialog-box nil)		;disable UI dialogs as prompts
+  (global-prettify-symbols-mode t)
+#+end_src
+* keybindings
+:PROPERTIES:
+:header-args: :tangle keybindings.el :results silent :mkdirp yes
+:END:
+** kill buffer and close window
+kill the current buffer and close its window/frame with =C-x C-k=
+#+begin_src emacs-lisp
+  (defun scame-kill-buffer-and-close-window ()
+    "kill current buffer and close  its window"
+    (interactive)
+    (kill-buffer)
+    (delete-window))
+  (bind-key "C-x C-k" #'scame-kill-buffer-and-close-window)
+#+end_src
+** join-lines with =C-x C-j=
+#+begin_src emacs-lisp
+  (bind-key "C-x C-j" #'join-line)
+#+end_src
+** move current file to trash C-x x x x
+#+begin_src emacs-lisp
+  (defun scame-move-current-file-to-trash ()
+    (interactive)
+    (when (eq major-mode 'dired-mode)
+      (user-error "%s: In dired. Nothing is done." real-this-command))
+    (move-file-to-trash buffer-file-name))
+  (bind-key "C-x x x" #'scame-move-current-file-to-trash)
+#+end_src
+** registers
+*** append-to-register keybinding
+useful when having multiple cursors, wanting to copy from all and pasting all contents at the location of only a single cursor
+#+begin_src emacs-lisp
+  (bind-key "C-x r a" #'append-to-register)
+#+end_src
+*** empty-register
+#+begin_src emacs-lisp
+  (defun scame-empty-register (register)
+    "Clears out value from Emacs register."
+    (interactive "cRegister: ")
+    (set-register register nil))
+  (bind-key "C-x r e" #'empty-register)
+#+end_src
+** kill line backwards
+position of the pointer to the beginning of the line with =C-S-k=
+#+begin_src emacs-lisp
+  (defun scame-kill-line-backward ()
+    "Kill line backwards from the position of the pointer to the beginning of the line."
+    (interactive)
+    (kill-line 0))
+  (bind-key "C-S-k" #'kill-line-backward)
+#+end_src
+** flymake
+finding syntax errors on the fly, also works with eglot and spellcheck (it also might be worth checking out [[https://www.flycheck.org] [Flycheck]])
+#+begin_src emacs-lisp
+  (bind-key "M-n" #'flymake-goto-next-error)
+  (bind-key "M-p" #'flymake-goto-prev-error)
+#+end_src
+** eglot
+add keybindings for when in eglot-mode (Emacs' built in language-server) inspired by rust-mode
+#+begin_src emacs-lisp
+  (require 'eglot)
+  (setq eglot-events-buffer-size 0) ;disable logging and improve perfomance
+  (define-key eglot-mode-map (kbd "C-c c r") #'eglot-rename)
+  (define-key eglot-mode-map (kbd "C-c c o") #'eglot-code-action-organize-imports)
+  (define-key eglot-mode-map (kbd "C-c c h") #'eldoc)
+  (define-key eglot-mode-map (kbd "C-c c a") #'eglot-code-actions)
+  (define-key eglot-mode-map (kbd "C-c c f") #'eglot-format-buffer)
+  (define-key eglot-mode-map (kbd "C-c c q") #'eglot-code-action-quickfix)
+  (define-key eglot-mode-map (kbd "C-c c e") #'eglot-code-action-extract)
+  (define-key eglot-mode-map (kbd "<f6>") #'xref-find-definitions)
+  (define-key eglot-mode-map (kbd "M-.") #'xref-find-definitions)
+#+end_src
+** bind M-<backspace> to delete in the search string during isearch
+#+begin_src emacs-lisp
+  (defun scame-isearch-del-word ()
+    "Delete the last word in the current isearch string."
+    (interactive)
+    (let ((len (length isearch-string)))
+      (if (and (not (string-empty-p isearch-string))
+               (string-match "\\(.*\\)\\W+\\w+$" isearch-string))
+          (setq isearch-string (match-string 1 isearch-string))
+        (setq isearch-string "")))
+    (isearch-update))
+  (define-key isearch-mode-map (kbd "M-<backspace>") 'scame-isearch-del-word)
+#+end_src
+
+* completion
+:PROPERTIES:
+:header-args: :tangle completion.el :results silent :mkdirp yes
+:END:
+** minibuffer completion
+*** save recent commands and files to file and make them the top completion candidate
+#+begin_src emacs-lisp
+  (setq completions-sort 'historical)
+  (savehist-mode)
+  (recentf-mode)
+
+  (setq minibuffer-visible-completions t)
+  (setq completion-auto-wrap t)
+#+end_src
+*** ignore case
+#+begin_src emacs-lisp
+  (setq read-file-name-completion-ignore-case t)
+#+end_src
+
+** in buffer completions
+#+begin_src emacs-lisp
+  (add-hook 'prog-mode-hook #'completion-preview-mode)
+  (add-hook 'text-mode-hook #'completion-preview-mode)
+  (add-hook 'org-mode-hook #'completion-preview-mode)
+#+end_src
+
+* org-mode
+:PROPERTIES:
+:header-args: :tangle org-mode.el :results silent :mkdirp yes
+:END:
+** org agenda
+#+begin_src emacs-lisp
+  (global-set-key (kbd "C-c a") #'org-agenda)
+  (setq org-agenda-start-day "0d")
+  (setq org-agenda-span 20)
+  (setq org-agenda-start-on-weekday nil)
+#+end_src
+
+** export
+*** when exporting org mode to latex, keep the comments
+#+begin_src emacs-lisp
+  (defun scame-transform-comments (backend)
+    (while (re-search-forward "[:blank:]*# " nil t)
+      (replace-match "#+LATEX: % ")))
+  (add-hook 'org-export-before-parsing-hook #'scame-transform-comments)
+#+end_src
+
+** replace S-M-arrow-key with S-M-{n,p,b,f}
+#+begin_src emacs-lisp
+  (add-hook 'org-mode-hook
+            (lambda ()
+              (local-set-key (kbd "M-F") 'org-shiftmetaright)))
+  (add-hook 'org-mode-hook
+            (lambda ()
+              (local-set-key (kbd "M-B") 'org-shiftmetaleft)))
+  (add-hook 'org-mode-hook
+            (lambda ()
+              (local-set-key (kbd "M-P") 'org-move-subtree-up)))
+  (add-hook 'org-mode-hook
+            (lambda ()
+              (local-set-key (kbd "M-N") 'org-move-subtree-down)))
+#+end_src
+** improve looks
+*** general
+#+begin_src emacs-lisp
+  (setq org-startup-indented t
+        org-pretty-entities t
+        org-hide-emphasis-markers t
+        org-startup-with-inline-images t
+        org-image-actual-width '(300))
+#+end_src
+*** increase heading and title size
+#+begin_src emacs-lisp
+  (custom-set-faces
+   '(org-level-1 ((t (:height 1.75))))
+   '(org-level-2 ((t (:height 1.5))))
+   '(org-level-3 ((t (:height 1.25))))
+   '(org-level-4 ((t (:height 1.1))))
+   '(org-document-title ((t (:height 1.5)))))
+#+end_src
+
+** org-babel
+*** block templates
+typing =<el= and Tab will expand to an emacs-lisp source block: =#+begin_src emacs-lisp=
+#+begin_src emacs-lisp
+  (require 'org-tempo)
+  (add-to-list 'org-structure-template-alist '("sh" . "src sh"))
+  (add-to-list 'org-structure-template-alist '("ba" . "src bash"))
+  (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+  (add-to-list 'org-structure-template-alist '("li" . "src lisp"))
+  (add-to-list 'org-structure-template-alist '("sc" . "src scheme"))
+  (add-to-list 'org-structure-template-alist '("ts" . "src typescript"))
+  (add-to-list 'org-structure-template-alist '("py" . "src python"))
+  (add-to-list 'org-structure-template-alist '("go" . "src go"))
+  (add-to-list 'org-structure-template-alist '("yaml" . "src yaml"))
+  (add-to-list 'org-structure-template-alist '("json" . "src json"))
+  (add-to-list 'org-structure-template-alist '("tex" . "src latex"))
+  (add-to-list 'org-structure-template-alist '("rs" . "src rust"))
+#+end_src
+*** execute source code blocks without confirmation
+#+begin_src emacs-lisp
+  (setq org-confirm-babel-evaluate nil)
+#+end_src
+*** use correct python version
+#+begin_src emacs-lisp
+  (setq org-babel-python-command "python3")
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((python . t)))
+#+end_src
+*** shells (sh, bash, zsh, fish, etc.)
+#+begin_src emacs-lisp
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((shell . t)))
+#+end_src
+* var
+:PROPERTIES:
+:header-args: :tangle var.el :results silent :mkdirp yes
+:END:
+** which key mode
+#+begin_src emacs-lisp
+  (which-key-mode t)
+#+end_src
+** move to trash instead of deleting
+the default trash dir is the xdg freedesktop location
+#+begin_src emacs-lisp
+  (setq delete-by-moving-to-trash t)
+#+end_src
+** save last location in file
+#+begin_src emacs-lisp
+  (save-place-mode t)
+#+end_src
+** revert (update) buffers when the underlying file has changed
+#+begin_src emacs-lisp
+  (global-auto-revert-mode t)
+  ;; revert dired and other buffers
+  (setq global-auto-revert-non-file-buffers t)
+#+end_src
+** replace selection
+typed text replaces the selection if the selection is active, pressing delete or backspace deletes the selection
+#+begin_src emacs-lisp
+  (delete-selection-mode t)
+#+end_src
+** dont overwrite system clipboard
+save system clipboard before yanking
+#+begin_src emacs-lisp
+  (setq save-interprogram-paste-before t)
+#+end_src
+** convert region from and to hexadecimal
+*** convert region to hexadecimal
+#+begin_src emacs-lisp
+  (defun scame-convert-region-decimal-to-hexadecimal (start end)
+    "Convert a region from decimal to hexadecimal."
+    (interactive "r")
+    (save-excursion
+      (goto-char start)
+      (while (< (point) end)
+        (let ((num (thing-at-point 'word)))
+          (when (string-match-p "^[0-9]+$" num)
+            (delete-region (point) (+ (point) (length num)))
+            (insert (format "0x%x" (string-to-number num)))))
+        (forward-word))))
+#+end_src
+*** convert region from hexadecimal
+#+begin_src emacs-lisp
+  (defun scame-convert-region-hexadecimal-to-decimal (start end)
+    "Convert a region from hexadecimal to decimal."
+    (interactive "r")
+    (save-excursion
+      (goto-char start)
+      (while (< (point) end)
+        (let ((num (thing-at-point 'word)))
+          (when (string-match-p "^0x[0-9a-fA-F]+$" num)
+            (delete-region (point) (+ (point) (length num)))
+            (insert (format "%d" (string-to-number (substring num 2) 16)))))
+        (forward-word))))
+#+end_src
+#+begin_src emacs-lisp :tangle no
+  (bind-key "C-c h" #'scame-convert-region-decimal-to-hexadecimal)
+  (bind-key "C-c d" #'scame-convert-region-hexadecimal-to-decimal)
+#+end_src
+** compile-mode scroll to bottom in compile mode output buffer
+#+begin_src emacs-lisp
+  (setq compilation-scroll-output 'first-error)
+#+end_src
+** show name of current function
+#+begin_src emacs-lisp
+  (add-hook 'prog-mode-hook #'which-function-mode)
+#+end_src
+** y-or-n-p makes answering questions faster
+#+begin_src emacs-lisp
+  (fset 'yes-or-no-p 'y-or-n-p)
+#+end_src
+* dired-settings
+:PROPERTIES:
+:header-args: :tangle dired-settings.el :results silent :mkdirp yes
+:END:
+** always delete directories recursivly without asking
+#+begin_src emacs-lisp
+  (setq dired-recursive-deletes 'always)
+#+end_src
+** show sizes of all files in human readable format
+#+begin_src emacs-lisp
+  (setq dired-listing-switches "-alh")
+#+end_src
+** automatically update dired buffers on revisiting their directory
+#+begin_src emacs-lisp
+  (setq dired-auto-revert-buffer t)
+#+end_src
+** dired do shell command suggestions
+**** extract tar.gz contents in subfolder instead of the current dir
+#+begin_src emacs-lisp
+  (setq dired-guess-shell-alist-user
+        '(("\\.tar\\.gz\\'"
+           "b=$(basename ? .tar.gz); mkdir -p \"$b\"; tar xzf ? -C \"$b\"")
+          ("\\.tar\\.bz2\\'"
+           "b=$(basename ? .tar.bz2); mkdir -p \"$b\"; tar xjf ? -C \"$b\"")
+          ("\\.tar\\.xz\\'"
+           "b=$(basename ? .tar.xz); mkdir -p \"$b\"; tar xJf ? -C \"$b\"")
+          ("\\.tar\\'"
+           "b=$(basename ? .tar); mkdir -p \"$b\"; tar xf ? -C \"$b\"")
+          ("\\.zip\\'"
+           "b=$(basename ? .zip); mkdir -p \"$b\"; unzip ? -d \"$b\"")
+          ("\\.rar\\'"
+           "b=$(basename ? .rar); mkdir -p \"$b\"; unrar ? \"$b\"")))
+#+end_src
+**** images
+#+begin_src emacs-lisp
+  (add-to-list 'dired-guess-shell-alist-user
+               '("\\.jpg\\'"
+                 "xdg-open ?"))
+#+end_src
+** make dired guess the target directory when copying
+#+begin_src emacs-lisp
+  (setq dired-dwim-target t)
+#+end_src
+** always copy directories recursivly
+#+begin_src emacs-lisp
+  (setq dired-recursive-copies 'always)
+#+end_src
+
+* editor-config
+:PROPERTIES:
+:header-args: :tangle editor-config.el :results silent :mkdirp yes
+:END:
+** folding code blocks
+set shortcuts for fold (collapse and expand) regions of text/code-blocks
+#+begin_src emacs-lisp
+  (add-hook 'prog-mode-hook #'hs-minor-mode)
+  (bind-key "C-c C-h" #'hs-hide-block)
+  (bind-key "C-c C-s" #'hs-show-block)
+  (bind-key "C-c C-t" #'hs-toggle-hiding)
+  (bind-key "C-<tab>" #'hs-toggle-hiding)
+  (bind-key "C-c C-a" #'hs-show-all)
+  (bind-key "C-c C-l" #'hs-hide-all)
+#+end_src
+** automatically add closing brackets, via electric-mode
+#+begin_src emacs-lisp
+  ;; (add-hook 'prog-mode-hook #'electric-pair-mode)
+#+end_src
+** auto indent
+auto indent
+#+begin_src emacs-lisp
+  (electric-indent-mode t)
+  (electric-quote-mode t)
+  					;(setq minibuffer-default-prompt-format " [%s]")
+  (minibuffer-electric-default-mode 1)
+#+end_src
+
+* external-packages
+
+* maybe
+** M-del: kill without copying
+** delete trailing whitespace on save
+#+begin_src emacs-lisp :tangle no
+  (add-hook 'before-save-hook
+  	  'delete-trailing-whitespace)
+#+end_src
+** Put Emacs auto-save and backup files to /tmp/ or C:/Temp/
+#+begin_src emacs-lisp
+  (defconst emacs-tmp-dir (expand-file-name (format "emacs%d" (user-uid)) temporary-file-directory))
+  (setq
+   backup-by-copying t			; Avoid symlinks
+   delete-old-versions t
+   kept-new-versions 6
+   kept-old-versions 2
+   version-control t
+   auto-save-list-file-prefix emacs-tmp-dir
+   auto-save-file-name-transforms `((".*" ,emacs-tmp-dir t))  ; Change autosave dir to tmp
+   backup-directory-alist `((".*" . ,emacs-tmp-dir)))
+#+end_src
