@@ -17,15 +17,15 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-(provide 'scame)
+(provide 'scame-base)
 
 (add-to-list 'load-path (file-name-directory (or load-file-name buffer-file-name)))
 
-(load "keybindings.el" nil t)
-(load "org-mode.el" nil t)
-(load "startup.el" nil t)
-(load "user-interface.el" nil t)
-(load "completion.el" nil t)
-(load "var.el" nil t)
-(load "dired-settings.el" nil t)
-(load "editor-config.el" nil t)
+(load "base/keybindings.el" nil t)
+(load "base/org-mode.el" nil t)
+(load "base/startup.el" nil t)
+(load "base/user-interface.el" nil t)
+(load "base/completion.el" nil t)
+(load "base/var.el" nil t)
+(load "base/dired-settings.el" nil t)
+(load "base/editor-config.el" nil t)

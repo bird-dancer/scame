@@ -1,4 +1,4 @@
-#+TITLE:  Scame.el
+#+TITLE: base
 #+AUTHOR: Felix Dumbeck <felix@dumbeck.net>
 #+LICENSE: LGPLv3+
 #+STARTUP: fold
@@ -19,18 +19,18 @@ E macs        -  you know what it is
 * how to use
 clone the package and put this in the beginning of your init.el
 #+begin_src emacs-lisp :tangle no
-  (load "~/scame/scame.el" nil t)
+  (load "~/scame/base.el" nil t)
 #+end_src
 you can also just load individual modules. they are named the same as the first level headings in this file e.g.
 #+begin_src emacs-lisp :tangle no
-  (load "~/scame/keybindings.el" nil t)
+  (load "~/scame/base/keybindings.el" nil t)
 #+end_src
 
-* scame.el
-load this file to load all modules below
+* base.el
 :PROPERTIES:
-:header-args: :tangle scame.el :results silent :mkdirp yes
+:header-args: :tangle base.el :results silent :mkdirp yes
 :END:
+load this file to load all modules below
 #+begin_src emacs-lisp
   ;;; scame.el --- simiple configurable agreeable modular emacs  -*- lexical-binding: t; -*-
 
@@ -51,23 +51,23 @@ load this file to load all modules below
   ;; You should have received a copy of the GNU General Public License
   ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-  (provide 'scame)
+  (provide 'scame-base)
 
   (add-to-list 'load-path (file-name-directory (or load-file-name buffer-file-name)))
 
-  (load "keybindings.el" nil t)
-  (load "org-mode.el" nil t)
-  (load "startup.el" nil t)
-  (load "user-interface.el" nil t)
-  (load "completion.el" nil t)
-  (load "var.el" nil t)
-  (load "dired-settings.el" nil t)
-  (load "editor-config.el" nil t)
+  (load "base/keybindings.el" nil t)
+  (load "base/org-mode.el" nil t)
+  (load "base/startup.el" nil t)
+  (load "base/user-interface.el" nil t)
+  (load "base/completion.el" nil t)
+  (load "base/var.el" nil t)
+  (load "base/dired-settings.el" nil t)
+  (load "base/editor-config.el" nil t)
 #+end_src
 
 * startup
 :PROPERTIES:
-:header-args: :tangle startup.el :results silent :mkdirp yes
+:header-args: :tangle base/startup.el :results silent :mkdirp yes
 :END:
 ** increase startup performance
 make garbage-collection less active by increasing its threshold during startup so Emacs starts up faster
@@ -107,7 +107,7 @@ prevent Emacs from adding custom settings to init.el and choose =custom.el= inst
 #+end_src
 * user interface
 :PROPERTIES:
-:header-args: :tangle user-interface.el :results silent :mkdirp yes
+:header-args: :tangle base/user-interface.el :results silent :mkdirp yes
 :END:
 ** disable bars
 #+begin_src emacs-lisp
@@ -132,7 +132,7 @@ prevent Emacs from adding custom settings to init.el and choose =custom.el= inst
 #+end_src
 * keybindings
 :PROPERTIES:
-:header-args: :tangle keybindings.el :results silent :mkdirp yes
+:header-args: :tangle base/keybindings.el :results silent :mkdirp yes
 :END:
 ** kill buffer and close window
 kill the current buffer and close its window/frame with =C-x C-k=
@@ -217,7 +217,7 @@ add keybindings for when in eglot-mode (Emacs' built in language-server) inspire
 
 * completion
 :PROPERTIES:
-:header-args: :tangle completion.el :results silent :mkdirp yes
+:header-args: :tangle base/completion.el :results silent :mkdirp yes
 :END:
 ** minibuffer completion
 *** save recent commands and files to file and make them the top completion candidate
@@ -243,7 +243,7 @@ add keybindings for when in eglot-mode (Emacs' built in language-server) inspire
 
 * org-mode
 :PROPERTIES:
-:header-args: :tangle org-mode.el :results silent :mkdirp yes
+:header-args: :tangle base/org-mode.el :results silent :mkdirp yes
 :END:
 ** org agenda
 #+begin_src emacs-lisp
@@ -318,13 +318,6 @@ typing =<el= and Tab will expand to an emacs-lisp source block: =#+begin_src ema
 #+begin_src emacs-lisp
   (setq org-confirm-babel-evaluate nil)
 #+end_src
-*** use correct python version
-#+begin_src emacs-lisp
-  (setq org-babel-python-command "python3")
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((python . t)))
-#+end_src
 *** shells (sh, bash, zsh, fish, etc.)
 #+begin_src emacs-lisp
   (org-babel-do-load-languages
@@ -333,7 +326,7 @@ typing =<el= and Tab will expand to an emacs-lisp source block: =#+begin_src ema
 #+end_src
 * var
 :PROPERTIES:
-:header-args: :tangle var.el :results silent :mkdirp yes
+:header-args: :tangle base/var.el :results silent :mkdirp yes
 :END:
 ** which-key mode
 which-key is great for getting an overview of what keybindings are available based on the prefix keys you entered. It shows a table of all possible ways you can finish a shortcut after having started one
@@ -412,7 +405,7 @@ save system clipboard before yanking
 #+end_src
 * dired-settings
 :PROPERTIES:
-:header-args: :tangle dired-settings.el :results silent :mkdirp yes
+:header-args: :tangle base/dired-settings.el :results silent :mkdirp yes
 :END:
 ** always delete directories recursivly without asking
 #+begin_src emacs-lisp
@@ -462,7 +455,7 @@ save system clipboard before yanking
 
 * editor-config
 :PROPERTIES:
-:header-args: :tangle editor-config.el :results silent :mkdirp yes
+:header-args: :tangle base/editor-config.el :results silent :mkdirp yes
 :END:
 ** folding code blocks
 set shortcuts for fold (collapse and expand) regions of text/code-blocks
@@ -487,10 +480,6 @@ auto indent
   					;(setq minibuffer-default-prompt-format " [%s]")
   (minibuffer-electric-default-mode 1)
 #+end_src
-
-* external-packages
-** spellcheck
-** org-roam
 
 * maybe
 ** M-del: kill without copying
