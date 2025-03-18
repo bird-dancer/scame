@@ -20,6 +20,8 @@
 
 (add-to-list 'dired-guess-shell-alist-user
              '("\\.jpg\\'"
+               "xdg-open ?")
+	     '("\\.png\\'"
                "xdg-open ?"))
 
 (setq dired-dwim-target t)

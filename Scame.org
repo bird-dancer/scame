@@ -4,14 +4,16 @@
 #+STARTUP: fold
 #+auto_tangle: t
 
-simple configurable agreeable modular emacsd
+* philosophy
+simple "performant" GNU Emacs 30+ [[https://leanpub.com/lit-config/read][literate config]] that uses as much built in stuff as possible and builds upon that where necessary
+
 unless you load external-packages.el only built in emacs functions will be used, leading to a very responsive but powerfull experience
 #+begin_example
-Simple       -  easy to use and read, it’s just setting varaibles and calling functions
-Configurable -  everything can be overwritten
-Agreeable    -  settings that are up to taste (e.g. font, theme) are left for the user to configure
-Modular      -  functionality is split up into different files, that can be loaded separatly from each other
-Emacs        -  you know what it is
+S imple       -  easy to use and read, it’s just setting varaibles and calling functions
+C onfigurable -  everything can be overwritten
+A greeable    -  settings that are up to taste (e.g. font, theme) are left for the user to configure
+M odular      -  functionality is split up into different files, that can be loaded separatly from each other
+E macs        -  you know what it is
 #+end_example
 
 * how to use
@@ -221,8 +223,8 @@ add keybindings for when in eglot-mode (Emacs' built in language-server) inspire
 *** save recent commands and files to file and make them the top completion candidate
 #+begin_src emacs-lisp
   (setq completions-sort 'historical)
-  (savehist-mode)
-  (recentf-mode)
+  (savehist-mode t)
+  (recentf-mode t)
 
   (setq minibuffer-visible-completions t)
   (setq completion-auto-wrap t)
@@ -246,6 +248,7 @@ add keybindings for when in eglot-mode (Emacs' built in language-server) inspire
 ** org agenda
 #+begin_src emacs-lisp
   (global-set-key (kbd "C-c a") #'org-agenda)
+  ;; make it so the agenda always starts today and we can see two weeks from today instead of just until Sunday
   (setq org-agenda-start-day "0d")
   (setq org-agenda-span 20)
   (setq org-agenda-start-on-weekday nil)
@@ -259,7 +262,6 @@ add keybindings for when in eglot-mode (Emacs' built in language-server) inspire
       (replace-match "#+LATEX: % ")))
   (add-hook 'org-export-before-parsing-hook #'scame-transform-comments)
 #+end_src
-
 ** replace S-M-arrow-key with S-M-{n,p,b,f}
 #+begin_src emacs-lisp
   (add-hook 'org-mode-hook
@@ -333,7 +335,8 @@ typing =<el= and Tab will expand to an emacs-lisp source block: =#+begin_src ema
 :PROPERTIES:
 :header-args: :tangle var.el :results silent :mkdirp yes
 :END:
-** which key mode
+** which-key mode
+which-key is great for getting an overview of what keybindings are available based on the prefix keys you entered. It shows a table of all possible ways you can finish a shortcut after having started one
 #+begin_src emacs-lisp
   (which-key-mode t)
 #+end_src
@@ -352,10 +355,10 @@ the default trash dir is the xdg freedesktop location
   ;; revert dired and other buffers
   (setq global-auto-revert-non-file-buffers t)
 #+end_src
-** replace selection
+** replace selection when typing
 typed text replaces the selection if the selection is active, pressing delete or backspace deletes the selection
 #+begin_src emacs-lisp
-  (delete-selection-mode t)
+  (delete-selection-mode)
 #+end_src
 ** dont overwrite system clipboard
 save system clipboard before yanking
@@ -395,7 +398,7 @@ save system clipboard before yanking
   (bind-key "C-c h" #'scame-convert-region-decimal-to-hexadecimal)
   (bind-key "C-c d" #'scame-convert-region-hexadecimal-to-decimal)
 #+end_src
-** compile-mode scroll to bottom in compile mode output buffer
+** compile-mode: scroll to bottom in compile mode output buffer
 #+begin_src emacs-lisp
   (setq compilation-scroll-output 'first-error)
 #+end_src
@@ -444,6 +447,8 @@ save system clipboard before yanking
 #+begin_src emacs-lisp
   (add-to-list 'dired-guess-shell-alist-user
                '("\\.jpg\\'"
+                 "xdg-open ?")
+  	     '("\\.png\\'"
                  "xdg-open ?"))
 #+end_src
 ** make dired guess the target directory when copying
@@ -484,6 +489,8 @@ auto indent
 #+end_src
 
 * external-packages
+** spellcheck
+** org-roam
 
 * maybe
 ** M-del: kill without copying

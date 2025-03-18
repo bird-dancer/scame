@@ -8,7 +8,7 @@
 ;; revert dired and other buffers
 (setq global-auto-revert-non-file-buffers t)
 
-(delete-selection-mode t)
+(delete-selection-mode)
 
 (setq save-interprogram-paste-before t)
 

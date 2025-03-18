@@ -1,4 +1,5 @@
 (global-set-key (kbd "C-c a") #'org-agenda)
+;; make it so the agenda always starts today and we can see two weeks from today instead of just until Sunday
 (setq org-agenda-start-day "0d")
 (setq org-agenda-span 20)
 (setq org-agenda-start-on-weekday nil)

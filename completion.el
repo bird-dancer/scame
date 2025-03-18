@@ -1,6 +1,6 @@
 (setq completions-sort 'historical)
-(savehist-mode)
-(recentf-mode)
+(savehist-mode t)
+(recentf-mode t)
 
 (setq minibuffer-visible-completions t)
 (setq completion-auto-wrap t)
