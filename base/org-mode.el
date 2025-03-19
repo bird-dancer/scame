@@ -35,6 +35,18 @@
  '(org-level-4 ((t (:height 1.1))))
  '(org-document-title ((t (:height 1.5)))))
 
+(defun scame--unpropertize (string)
+  "Removes all text properties from STRING."
+  (set-text-properties 0 (length string) nil string) string)
+(defun scame--org-get-headings ()
+  "Return a list of an org document's headings."
+  (org-map-entries (lambda () (scame--unpropertize (org-get-heading t t t t)))))
+(defun scame-org-insert-link-headline (header)
+  "Insert internal link to HEADER entry in current file."
+  (interactive (list (completing-read "Link: " (scame--org-get-headings) nil nil)))
+  (org-insert-link nil header))
+;; (define-key org-mode-map (kbd "C-c h") 'org-insert-link-headline)
+
 (require 'org-tempo)
 (add-to-list 'org-structure-template-alist '("sh" . "src sh"))
 (add-to-list 'org-structure-template-alist '("ba" . "src bash"))

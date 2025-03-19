@@ -42,14 +42,3 @@
 (define-key eglot-mode-map (kbd "C-c c e") #'eglot-code-action-extract)
 (define-key eglot-mode-map (kbd "<f6>") #'xref-find-definitions)
 (define-key eglot-mode-map (kbd "M-.") #'xref-find-definitions)
-
-(defun scame-isearch-del-word ()
-  "Delete the last word in the current isearch string."
-  (interactive)
-  (let ((len (length isearch-string)))
-    (if (and (not (string-empty-p isearch-string))
-             (string-match "\\(.*\\)\\W+\\w+$" isearch-string))
-        (setq isearch-string (match-string 1 isearch-string))
-      (setq isearch-string "")))
-  (isearch-update))
-(define-key isearch-mode-map (kbd "M-<backspace>") 'scame-isearch-del-word)

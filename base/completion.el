@@ -1,4 +1,5 @@
 (setq completions-sort 'historical)
+;;(setq history-length 50)
 (savehist-mode t)
 (recentf-mode t)
 
@@ -7,6 +8,4 @@
 
 (setq read-file-name-completion-ignore-case t)
 
-(add-hook 'prog-mode-hook #'completion-preview-mode)
-(add-hook 'text-mode-hook #'completion-preview-mode)
-(add-hook 'org-mode-hook #'completion-preview-mode)
+(global-completion-preview-mode t)

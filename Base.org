@@ -10,14 +10,14 @@
 :END:
 load this file to load all modules below
 #+begin_src emacs-lisp
-  ;;; scame.el --- simiple configurable agreeable modular emacs  -*- lexical-binding: t; -*-
+  ;;; base.el --- simiple configurable agreeable modular emacs  -*- lexical-binding: t; -*-
 
   ;; Copyright (C) 2025  Felix Dumbeck
 
   ;; Author: Felix Dumbeck <felix@dumbeck.net>
 
   ;; This program is free software; you can redistribute it and/or modify
-  ;; it under the terms of the GNU General Public License as published by
+  ;; it under the terms of the Lesser GNU General Public License as published by
   ;; the Free Software Foundation, either version 3 of the License, or
   ;; (at your option) any later version.
 
@@ -26,13 +26,10 @@ load this file to load all modules below
   ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   ;; GNU General Public License for more details.
 
-  ;; You should have received a copy of the GNU General Public License
+  ;; You should have received a copy of the Lesser GNU General Public License
   ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-  (provide 'scame-base)
-
   (add-to-list 'load-path (file-name-directory (or load-file-name buffer-file-name)))
-
   (load "base/keybindings.el" nil t)
   (load "base/org-mode.el" nil t)
   (load "base/startup.el" nil t)
@@ -41,6 +38,7 @@ load this file to load all modules below
   (load "base/var.el" nil t)
   (load "base/dired-settings.el" nil t)
   (load "base/editor-config.el" nil t)
+  (load "base/melpa.el" nil t)
 #+end_src
 
 * startup
@@ -179,8 +177,9 @@ add keybindings for when in eglot-mode (Emacs' built in language-server) inspire
   (define-key eglot-mode-map (kbd "<f6>") #'xref-find-definitions)
   (define-key eglot-mode-map (kbd "M-.") #'xref-find-definitions)
 #+end_src
-** bind M-<backspace> to delete in the search string during isearch
-#+begin_src emacs-lisp
+** when in read only mode make navigation work without control key
+** bind M-<backspace> to delete in the search string during isearch (doesnt work)
+#+begin_src emacs-lisp :tangle no
   (defun scame-isearch-del-word ()
     "Delete the last word in the current isearch string."
     (interactive)
@@ -201,6 +200,7 @@ add keybindings for when in eglot-mode (Emacs' built in language-server) inspire
 *** save recent commands and files to file and make them the top completion candidate
 #+begin_src emacs-lisp
   (setq completions-sort 'historical)
+  ;;(setq history-length 50)
   (savehist-mode t)
   (recentf-mode t)
 
@@ -211,12 +211,14 @@ add keybindings for when in eglot-mode (Emacs' built in language-server) inspire
 #+begin_src emacs-lisp
   (setq read-file-name-completion-ignore-case t)
 #+end_src
-
-** in buffer completions
+** enable completion-preview-mode
 #+begin_src emacs-lisp
-  (add-hook 'prog-mode-hook #'completion-preview-mode)
-  (add-hook 'text-mode-hook #'completion-preview-mode)
-  (add-hook 'org-mode-hook #'completion-preview-mode)
+  (global-completion-preview-mode t)
+#+end_src
+#+begin_src emacs-lisp :tangle no
+  (setq completion-show-inline-help t)
+  (setq completion-auto-help 'always)
+  (completion-preview-mode 1)
 #+end_src
 
 * org-mode
@@ -272,6 +274,22 @@ add keybindings for when in eglot-mode (Emacs' built in language-server) inspire
    '(org-level-3 ((t (:height 1.25))))
    '(org-level-4 ((t (:height 1.1))))
    '(org-document-title ((t (:height 1.5)))))
+#+end_src
+
+** suggest headings when inserting link
+when inserting a new link to a heading in the current document, an auto completion minibuffer will pop up, suggesting all headings in the current document. From: [[https://howardism.org/Technical/Emacs/tiddly-wiki-in-org.html][TiddlyWiki In Org]]
+#+begin_src emacs-lisp
+  (defun scame--unpropertize (string)
+    "Removes all text properties from STRING."
+    (set-text-properties 0 (length string) nil string) string)
+  (defun scame--org-get-headings ()
+    "Return a list of an org document's headings."
+    (org-map-entries (lambda () (scame--unpropertize (org-get-heading t t t t)))))
+  (defun scame-org-insert-link-headline (header)
+    "Insert internal link to HEADER entry in current file."
+    (interactive (list (completing-read "Link: " (scame--org-get-headings) nil nil)))
+    (org-insert-link nil header))
+  ;; (define-key org-mode-map (kbd "C-c h") 'org-insert-link-headline)
 #+end_src
 
 ** org-babel
@@ -446,17 +464,27 @@ set shortcuts for fold (collapse and expand) regions of text/code-blocks
   (bind-key "C-c C-a" #'hs-show-all)
   (bind-key "C-c C-l" #'hs-hide-all)
 #+end_src
-** automatically add closing brackets, via electric-mode
-#+begin_src emacs-lisp
-  ;; (add-hook 'prog-mode-hook #'electric-pair-mode)
+** automatically add closing brackets, via electric-mode (disabled)
+#+begin_src emacs-lisp :tangle no
+  (add-hook 'prog-mode-hook #'electric-pair-mode)
 #+end_src
-** auto indent
+** auto indent (disabled)
 auto indent
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (electric-indent-mode t)
   (electric-quote-mode t)
   					;(setq minibuffer-default-prompt-format " [%s]")
   (minibuffer-electric-default-mode 1)
+#+end_src
+
+* melpa
+:PROPERTIES:
+:header-args: :tangle base/melpa.el :results silent :mkdirp yes
+:END:
+enable the [[https://melpa.org/#/][melpa]] repository, providing additional packages
+#+begin_src emacs-lisp
+  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+  (setq use-package-always-ensure t)
 #+end_src
 
 * maybe
@@ -466,7 +494,7 @@ auto indent
   (add-hook 'before-save-hook
   	  'delete-trailing-whitespace)
 #+end_src
-** Put Emacs auto-save and backup files to /tmp/ or C:/Temp/
+** put Emacs auto-save and backup files to /tmp/ or C:/Temp/
 #+begin_src emacs-lisp
   (defconst emacs-tmp-dir (expand-file-name (format "emacs%d" (user-uid)) temporary-file-directory))
   (setq
