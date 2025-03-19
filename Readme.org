@@ -65,6 +65,6 @@ this is what my Emacs config looks like:
 #+end_src
 
 * requirements
-For [[base]] only GNU Emacs 30.1+ is required.
+For [[file:Base.org][base]] only GNU Emacs 30.1+ is required.
 
 
