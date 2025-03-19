@@ -4,7 +4,7 @@
 
 
 * philosophy
-simple "performant" GNU Emacs 30+ [[https://leanpub.com/lit-config/read][literate config]] that uses as much built in stuff as possible and builds upon that where necessary
+simple "performant" GNU Emacs 30 [[https://leanpub.com/lit-config/read][literate config]] that uses as much built in stuff as possible and builds upon that where necessary
 
 unless you load external-packages.el only built in emacs functions will be used, leading to a very responsive but powerfull experience
 
@@ -19,28 +19,20 @@ E macs        -  you know what it is
 * how to use
 clone the package and put this in the beginning of your init.el
 
-All configurations in [[file:Base.org][base]] do not include external packages and are only using emacs 30 built in functionality.
+all configurations in [[file:Base.org][base]] do not include external packages and are only using GNU Emacs’ 30 built in functionality.
 If you want to extend Emacs' functionality even further you can include the [[file:Extended.org][extended]] configurations.
 
 ** base
+if you want the maximum functionality with all available features:
 #+begin_src emacs-lisp
   (load "~/scame/base.el" nil t)
-#+end_src
-
-you can also just load individual modules. they are named the same as the first level headings in this file e.g.
-
-#+begin_src emacs-lisp
-  (load "~/scame/base/keybindings.el" nil t)
-#+end_src
-
-** extended
-#+begin_src emacs-lisp
   (load "~/scame/extended.el" nil t)
 #+end_src
 
-or for only packages focused on specific functionality use e.g:
+you can also just load individual modules. They are named the same as the first level headings in the respective file. See the directories =base= and =extended=.
 
 #+begin_src emacs-lisp
+  (load "~/scame/base/keybindings.el" nil t)
   (load "~/scame/extended/buffer-completion-system.el" nil t)
 #+end_src
 
@@ -64,7 +56,13 @@ this is what my Emacs config looks like:
   (bind-key "C-z" #'yank)
 #+end_src
 
-* requirements
-For [[file:Base.org][base]] only GNU Emacs 30.1+ is required.
+* external dependencies
++ [[file:Base.org][base]]: only GNU Emacs 30.1+ is required.
++ =extended/spell-check=: libenchant
++ =extended/git=: git
++ =extended/more-packages=:
+  + pdf-tools: on [[https://github.com/vedang/pdf-tools?tab=readme-ov-file#installing-the-epdfinfo-server][many distros]] these will be installed automatically when calling =M-x pdf-tools-install=
+    make ,automake ,autoconf ,gcc ,libpng16-devel ,libpng16-compat-devel ,zlib-devel ,libpoppler-devel,libpoppler-glib-devel ,glib2-devel ,pkgconf
+    
 
 
