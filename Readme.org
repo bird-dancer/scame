@@ -22,7 +22,6 @@ clone the package and put this in the beginning of your init.el
 all configurations in [[file:Base.org][base]] do not include external packages and are only using GNU Emacs’ 30 built in functionality.
 If you want to extend Emacs' functionality even further you can include the [[file:Extended.org][extended]] configurations.
 
-** base
 if you want the maximum functionality with all available features:
 #+begin_src emacs-lisp
   (load "~/scame/base.el" nil t)
@@ -62,6 +61,7 @@ this is what my Emacs config looks like:
 + =extended/git=: git
 + =extended/more-packages=:
   + pdf-tools: on [[https://github.com/vedang/pdf-tools?tab=readme-ov-file#installing-the-epdfinfo-server][many distros]] these will be installed automatically when calling =M-x pdf-tools-install=
+
     make ,automake ,autoconf ,gcc ,libpng16-devel ,libpng16-compat-devel ,zlib-devel ,libpoppler-devel,libpoppler-glib-devel ,glib2-devel ,pkgconf
     
 
