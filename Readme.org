@@ -1,0 +1,70 @@
+#+TITLE: extended
+#+AUTHOR: Felix Dumbeck <felix@dumbeck.net>
+#+LICENSE: LGPLv3+
+
+
+* philosophy
+simple "performant" GNU Emacs 30+ [[https://leanpub.com/lit-config/read][literate config]] that uses as much built in stuff as possible and builds upon that where necessary
+
+unless you load external-packages.el only built in emacs functions will be used, leading to a very responsive but powerfull experience
+
+#+begin_example
+S imple       -  easy to use and read, it’s just setting varaibles and calling functions
+C onfigurable -  everything can be overwritten
+A greeable    -  settings that are up to taste (e.g. font, theme) are left for the user to configure
+M odular      -  functionality is split up into different files, that can be loaded separatly from each other
+E macs        -  you know what it is
+#+end_example
+
+* how to use
+clone the package and put this in the beginning of your init.el
+
+All configurations in [[file:Base.org][base]] do not include external packages and are only using emacs 30 built in functionality.
+If you want to extend Emacs' functionality even further you can include the [[file:Extended.org][extended]] configurations.
+
+** base
+#+begin_src emacs-lisp
+  (load "~/scame/base.el" nil t)
+#+end_src
+
+you can also just load individual modules. they are named the same as the first level headings in this file e.g.
+
+#+begin_src emacs-lisp
+  (load "~/scame/base/keybindings.el" nil t)
+#+end_src
+
+** extended
+#+begin_src emacs-lisp
+  (load "~/scame/extended.el" nil t)
+#+end_src
+
+or for only packages focused on specific functionality use e.g:
+
+#+begin_src emacs-lisp
+  (load "~/scame/extended/buffer-completion-system.el" nil t)
+#+end_src
+
+** example config
+this is what my Emacs config looks like:
+
+#+begin_src emacs-lisp
+  (load "~/scame/base.el" nil t)
+  (load "~/scame/extended.el" nil t)
+
+  (set-frame-font "Comic Shanns Mono 14" nil t)
+  (load-theme 'modus-operandi-tinted)
+
+  (setq user-full-name "Felix Dumbeck"
+        user-mail-address "felix@dumbeck.net")
+
+  (setq org-agenda-files
+        '("~/uni/notes/uni.org"
+          "~/uni/notes/personal.org"))
+
+  (bind-key "C-z" #'yank)
+#+end_src
+
+* requirements
+For [[base]] only GNU Emacs 30.1+ is required.
+
+
