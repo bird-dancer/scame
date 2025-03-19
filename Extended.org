@@ -1,0 +1,423 @@
+#+TITLE: extended
+#+AUTHOR: Felix Dumbeck <felix@dumbeck.net>
+#+LICENSE: LGPLv3+
+#+STARTUP: fold
+#+auto_tangle: t
+
+this is an extension and includes functionality provided by external packages and configures them
+
+* extended.el
+:PROPERTIES:
+:header-args: :tangle extended.el :results silent :mkdirp yes
+:END:
+load this file to load all modules below
+#+begin_src emacs-lisp
+  (add-to-list 'load-path (file-name-directory (or load-file-name buffer-file-name)))
+  (load "extended/mode-line.el" nil t)
+  (load "extended/org-mode.el" nil t)
+  (load "extended/spell-check.el" nil t)
+  (load "extended/dired-setting.el" nil t)
+  (load "extended/git.el" nil t)
+  (load "extended/buffer-completion-system.el" nil t)
+  (load "extended/minibuffer-completion-system.el" nil t)
+  (load "extended/more-packages.el" nil t)
+#+end_src
+* mode-line
+:PROPERTIES:
+:header-args: :tangle extended/mode-line.el :results silent :mkdirp yes
+:END:
+** doom modeline
+show the mode status line from doom Emacs at the bottom to provide more information while looking nicer
+#+begin_src emacs-lisp
+  (use-package doom-modeline
+    :init (doom-modeline-mode t)
+    :config
+    (display-battery-mode)
+    (setq display-time-24hr-format t)
+    (display-time))
+#+end_src
+** make it so mode line can be hidden by calling =hide-mode-line=
+#+begin_src emacs-lisp :tangle no
+  (use-package hide-mode-line
+    :defer t
+    :commands (hide-mode-line-mode))
+#+end_src
+
+* org-mode
+:PROPERTIES:
+:header-args: :tangle extended/org-mode.el :results silent :mkdirp yes
+:END:
+** functionality
+*** org-contrib
+add contrib package for extra features
+#+begin_src emacs-lisp :tangle no
+  (use-package org-contrib
+    :after org-mode)
+#+end_src
+*** org-cliplink (melpa)
+give pasted links the title provided by the meta-information of the website
+#+begin_src emacs-lisp :tangle no
+  (use-package org-cliplink
+    :bind ("C-x p i" . org-cliplink))
+#+end_src
+*** ox-hugo (melpa)
+export org-mode files to HTML pages using hugo
+#+begin_src emacs-lisp :tangle no
+  (use-package ox-hugo
+    :after org-mode
+    :commands org-hugo-auto-export-mode)
+#+end_src
+*** drag-and-drop (melpa)
+enable drag-and-drop support for images and files; inserts inline previews for images and an icon+link for other media types.
+#+begin_src emacs-lisp :tangle no
+  (use-package org-download
+    :hook ((org-mode . org-download-mode)
+           (dired-mode . org-download-enable)))
+#+end_src
+** improve looks
+*** show hidden emphasis markers (melpa)
+show style emphasis markers such as the * in =*bold*= when hovering over the word
+#+begin_src emacs-lisp :tangle no
+  (use-package org-appear
+    :hook (org-mode . org-appear-mode))
+#+end_src
+*** org-superstar (melpa)
+make bullet points and headings look nicer
+#+begin_src emacs-lisp :tangle no
+  (use-package org-superstar
+    :hook (org-mode . org-superstar-mode))
+#+end_src
+** org-auto-tangle
+when ~#+auto_tangle: t~ is set in the beginning of an org-file, tangle all code blocks that are set to tangle when saving
+#+begin_src emacs-lisp
+  (use-package org-auto-tangle
+    :defer t
+    :hook (org-mode . org-auto-tangle-mode))
+#+end_src
+
+* spell-check (melpa)
+:PROPERTIES:
+:header-args: :tangle extended/spell-check.el :results silent :mkdirp yes
+:END:
+jinx spellchecking, requires (lib-)enchant using hunspell dictionaries
+#+begin_src emacs-lisp
+  ;; use on normal systems
+  (use-package jinx
+    :if (not (file-directory-p "~/.guix-profile/share/emacs/site-lisp")) ;only install on non guix system
+    :hook (emacs-startup . global-jinx-mode)
+    :bind (("M-$" . jinx-correct)
+           ("C-M-$" . jinx-languages)))
+
+  ;; use emacs-jinx package from guix if available
+  (use-package jinx
+    :if (file-directory-p "~/.guix-profile/share/emacs/site-lisp") ;only install on guix system
+    :ensure nil
+    :load-path "~/.guix-profile/share/emacs/site-lisp/jinx-1.9/"
+    :hook (emacs-startup . global-jinx-mode)
+    :bind (("M-$" . jinx-correct)
+           ("C-M-$" . jinx-languages)))
+
+  ;; (add-hook 'emacs-startup-hook #'global-jinx-mode)
+  ;; (keymap-global-set "M-$" #'jinx-correct)
+  ;; (keymap-global-set "C-M-$" #'jinx-languages)
+  ;; (keymap-global-set "M-p" #'jinx-previous)
+  ;; (keymap-global-set "M-n" #'jinx-next)
+#+end_src
+
+* editing-config
+** highlight TODO
+highlight TODO FIXME etc.
+#+begin_src emacs-lisp
+  (use-package hl-todo
+    :hook ((prog-mode . hl-todo-mode)
+           (org-mode . hl-todo-mode))
+    :config
+    ;; (keymap-set hl-todo-mode-map "C-c p" #'hl-todo-previous)
+    ;; (keymap-set hl-todo-mode-map "C-c n" #'hl-todo-next)
+    ;; (keymap-set hl-todo-mode-map "C-c o" #'hl-todo-occur)
+    ;; (keymap-set hl-todo-mode-map "C-c i" #'hl-todo-insert)
+    (setq hl-todo-keyword-faces
+          '(("TODO"   . "#FF0000")
+            ("FIXME"  . "#FF0000")
+            ("DEBUG"  . "#A020F0")
+            ("GOTCHA" . "#FF4500")
+            ("STUB"   . "#1E90FF"))))
+#+end_src
+** rainbow delimiters
+match brackets and other delimiters by color to see the current scope more easily
+#+begin_src emacs-lisp
+  (use-package rainbow-delimiters
+    :hook (prog-mode . rainbow-delimiters-mode))
+#+end_src
+* dired-setting
+:PROPERTIES:
+:header-args: :tangle extended/dired-setting.el :results silent :mkdirp yes
+:END:
+*** show file icons (melpa)
+#+begin_src emacs-lisp
+  (use-package all-the-icons-dired
+    :after all-the-icons
+    :hook (dired-mode . all-the-icons-dired-mode))
+#+end_src
+*** show sizes of folders
+#+begin_src emacs-lisp
+  (use-package dired-du
+    :after dired
+    :config (setq dired-du-size-format t))
+#+end_src
+* git
+:PROPERTIES:
+:header-args: :tangle extended/git.el :results silent :mkdirp yes
+:END:
+** magit
+#+begin_src emacs-lisp
+  (use-package magit
+    :ensure t)
+  ;; (use-package magit
+  ;; :bind (("C-x g" . magit)
+  ;;        ("C-x c" . magit-clone-shallow)))
+#+end_src
+** forge
+Forge allows you to work with Git forges, currently Github and Gitlab, from the comfort of Magit and Emacs.
+#+begin_src emacs-lisp :tangle no
+  (use-package forge
+    :after magit)
+#+end_src
+** diff-hl
+highlight uncommitted, changed lines on the side of a buffer
+#+begin_src emacs-lisp
+  (use-package diff-hl
+    :hook ((text-mode . diff-hl-mode)
+           (org-mode . diff-hl-mode)
+           (prog-mode . diff-hl-mode)
+           (dired-mode . diff-hl-dired-mode)))
+#+end_src
+
+* restclient
+manually explore and test HTTP REST webservices
+#+begin_src emacs-lisp
+  (use-package restclient
+    :defer t)
+#+end_src
+* multiple-cursors
+:PROPERTIES:
+:header-args: :tangle extended/multiple-cursors.el :results silent :mkdirp yes
+:END:
+#+begin_src emacs-lisp
+  (use-package multiple-cursors
+    :ensure t
+    :bind (("C-;" . mc/edit-lines)	;non standard
+           ("C-S-c C-S-c" . mc/edit-lines)
+           ("C->" . mc/mark-next-like-this)
+           ("C-<" . mc/mark-previous-like-this)
+           ("C-c C-<" . mc/mark-all-like-this))
+    :init
+    (setq  mc/match-cursor-style nil))	;or else cursors dont show up when style is bar
+#+end_src
+* buffer-completion-system
+:PROPERTIES:
+:header-args: :tangle extended/buffer-completion-system.el :results silent :mkdirp yes
+:END:
+** cape: completion at point extensions
+#+begin_src emacs-lisp
+  (use-package cape
+    :bind ("C-c p" . cape-prefix-map)
+    :init
+    ;; Add to the global default value of `completion-at-point-functions' which is
+    ;; used by `completion-at-point'.  The order of the functions matters, the
+    ;; first function returning a result wins.  Note that the list of buffer-local
+    ;; completion functions takes precedence over the global list.
+    (add-hook 'completion-at-point-functions #'cape-dabbrev)
+    (add-hook 'completion-at-point-functions #'cape-file)
+    (add-hook 'completion-at-point-functions #'cape-elisp-block)
+    (add-hook 'completion-at-point-functions #'cape-history)
+    ;; ...
+    )
+#+end_src
+** corfu: completion frontend popup
+for terminal use with version < 31 look into [[https://codeberg.org/akib/emacs-corfu-terminal][corfu-terminal]]
+*** corfu
+#+begin_src emacs-lisp
+  (use-package corfu
+    ;; Optional customizations
+    :custom
+    (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
+    ;; (corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
+    ;; (corfu-quit-no-match nil)      ;; Never quit, even if there is no match
+    ;; (corfu-preview-current nil)    ;; Disable current candidate preview
+    ;; (corfu-preselect ’valid)      ;; Preselect the prompt
+    ;; (corfu-on-exact-match nil)     ;; Configure handling of exact matches
+    (corfu-auto t)			;enable auto completion
+    (corfu-auto-delay 0)
+    (corfu-auto-prefix 3)
+    (corfu-quit-no-match 'separator) ;; or t
+
+    ;; (:map corfu-map ("M-SPC" . corfu-insert-separator)) ;orderless field separator
+
+    :init
+    (global-corfu-mode))
+
+  (use-package emacs
+    :custom
+    ;; TAB cycle if there are only few candidates
+    (completion-cycle-threshold 3)
+
+    ;; Enable indentation+completion using the TAB key.
+    ;; `completion-at-point' is often bound to M-TAB.
+    (tab-always-indent 'complete)
+
+    ;; Emacs 30 and newer: Disable Ispell completion function.
+    ;; Try `cape-dict' as an alternative.
+    (text-mode-ispell-word-completion nil)
+
+    ;; Hide commands in M-x which do not apply to the current mode.  Corfu
+    ;; commands are hidden, since they are not used via M-x. This setting is
+    ;; useful beyond Corfu.
+    (read-extended-command-predicate #'command-completion-default-include-p))
+#+end_src
+*** disable built in completion-preview-mode
+#+begin_src emacs-lisp
+  (global-completion-preview-mode nil)
+#+end_src
+*** icons for completion candidates
+add nerd-font icons to corfu completion candidates
+#+begin_src emacs-lisp
+  (use-package nerd-icons-corfu
+    :config
+    (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
+#+end_src
+for compatibility problems with nerd-fonts use: [[https://github.com/jdtsmith/kind-icon][kind-icon]]
+*** corfu-popupinfo mode
+show documentation and optionally source code in pop up buffer next to auto-completion
+#+begin_src emacs-lisp
+  
+#+end_src
+*** if perfomance issues occur use basic completion sytle (disabled)
+#+begin_src emacs-lisp :tangle no
+  (add-hook 'corfu-mode-hook
+            (lambda ()
+              ;; Settings only for Corfu
+              (setq-local completion-styles '(basic)
+                          completion-category-overrides nil
+                          completion-category-defaults nil)))
+#+end_src
+*** completing in the eshell or shell
+#+begin_src emacs-lisp
+  (add-hook 'eshell-mode-hook (lambda ()
+                                (setq-local corfu-auto t)
+                                (corfu-mode)))
+  (keymap-set corfu-map "RET" #'corfu-send) ;on enter select completion and execute (same as pressing enter twice)
+#+end_src
+*** corfu minibuffer (disabled)
+#+begin_src emacs-lisp :tangle no
+  (setq global-corfu-minibuffer
+        (lambda ()
+          (not (or (bound-and-true-p mct--active)
+                   (bound-and-true-p vertico--input)
+                   (eq (current-local-map) read-passwd-map)))))
+#+end_src
+*** orderless (disabled)
+improve vertico and corfu completions by allowing matches to search terms differently ordered
+#+begin_src emacs-lisp :tangle no
+  (use-package orderless
+    :custom
+    ;; (orderless-style-dispatchers '(orderless-affix-dispatch))
+    ;; (orderless-component-separator #'orderless-escapable-split-on-space)
+    (completion-styles '(orderless basic))
+    (completion-category-defaults nil)
+    (completion-category-overrides '((file (styles partial-completion)))))
+#+end_src
+* minibuffer-completion-system
+:PROPERTIES:
+:header-args: :tangle extended/minibuffer-completion-system.el :results silent :mkdirp yes
+:END:
+** vertico: performant and minimalist vertical completion UI based on the default completion system for minibuffers
+#+begin_src emacs-lisp
+  (use-package vertico
+    :custom
+    (vertico-scroll-margin 0) ;; Different scroll margin
+    ;; (vertico-count 10) ;; Show more candidates
+    (vertico-resize nil) ;; Grow and shrink the Vertico minibuffer
+    (vertico-cycle t) ;; Enable cycling for `vertico-next/previous'
+    :init
+    (vertico-mode))
+
+  ;; Emacs minibuffer configurations.
+  (use-package emacs
+    :custom
+    ;; Support opening new minibuffers from inside existing minibuffers.
+    (enable-recursive-minibuffers t)
+    ;; Hide commands in M-x which do not work in the current mode.  Vertico
+    ;; commands are hidden in normal buffers. This setting is useful beyond
+    ;; Vertico.
+    (read-extended-command-predicate #'command-completion-default-include-p)
+    ;; Do not allow the cursor in the minibuffer prompt
+    (minibuffer-prompt-properties
+     '(read-only t cursor-intangible t face minibuffer-prompt)))
+#+end_src
+
+for default completion commands (disabled):
+#+begin_src emacs-lisp
+  ;; Option 1: Additional bindings
+  (keymap-set vertico-map "?" #'minibuffer-completion-help)
+  (keymap-set vertico-map "M-RET" #'minibuffer-force-complete-and-exit)
+  (keymap-set vertico-map "M-TAB" #'minibuffer-complete)
+
+  ;; Option 2: Replace `vertico-insert' to enable TAB prefix expansion.
+  ;; (keymap-set vertico-map "TAB" #'minibuffer-complete)
+#+end_src
+** orderless
+improve vertico and corfu completions by allowing matches to search terms differently ordered
+#+begin_src emacs-lisp
+  ;; Optionally use the `orderless' completion style.
+  (use-package orderless
+    :custom
+    ;; Configure a custom style dispatcher (see the Consult wiki)
+    ;; (orderless-style-dispatchers '(+orderless-consult-dispatch orderless-affix-dispatch))
+    ;; (orderless-component-separator #'orderless-escapable-split-on-space)
+    (completion-styles '(orderless basic))
+    (completion-category-defaults nil)
+    (completion-category-overrides '((file (styles partial-completion)))))
+#+end_src
+** marginalia
+#+begin_src emacs-lisp
+  (use-package marginalia
+    ;; Bind `marginalia-cycle' locally in the minibuffer.  To make the binding
+    ;; available in the *Completions* buffer, add it to the
+    ;; `completion-list-mode-map'.
+    :bind (:map minibuffer-local-map
+           ("M-A" . marginalia-cycle))
+
+    ;; The :init section is always executed.
+    :init
+
+    ;; Marginalia must be activated in the :init section of use-package such that
+    ;; the mode gets enabled right away. Note that this forces loading the
+    ;; package.
+    (marginalia-mode))
+#+end_src
+** vertico show candidate icons
+icons for completion options
+#+begin_src emacs-lisp :tangle no
+  (use-package all-the-icons-completion
+    :after (all-the-icons marginalia)
+    :init (all-the-icons-completion-mode)
+    :hook (marginalia-mode . all-the-icons-completion-marginalia-setup))
+#+end_src
+* more-packages
+:PROPERTIES:
+:header-args: :tangle extended/more-packages.el :results silent :mkdirp yes
+:END:
+** pdf-tools
+better interaction with pdf
+#+begin_src emacs-lisp
+  (use-package pdf-tools
+    :if (not (file-directory-p "~/.guix-profile/share/emacs/site-lisp")) ;only install on non guix system
+    :mode ("\\.pdf\\'" . pdf-view-mode))
+  (use-package pdf-tools
+    :if (file-directory-p "~/.guix-profile/share/emacs/site-lisp") ;only install on guix system
+    :ensure nil
+    :load-path "~/.guix-profile/share/emacs/site-lisp/pdf-tools-1.1.0"
+    :mode ("\\.pdf\\'" . pdf-view-mode))
+#+end_src
+
