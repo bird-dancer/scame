@@ -14,3 +14,4 @@
 (setq project-mode-line t)		;show current project name is mode line
 (setq use-dialog-box nil)		;disable UI dialogs as prompts
 (global-prettify-symbols-mode t)
+(pixel-scroll-precision-mode)

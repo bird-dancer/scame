@@ -49,7 +49,7 @@
   ;; useful beyond Corfu.
   (read-extended-command-predicate #'command-completion-default-include-p))
 
-(global-completion-preview-mode nil)
+(global-completion-preview-mode -1)
 
 (use-package nerd-icons-corfu
   :config

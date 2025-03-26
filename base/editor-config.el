@@ -5,3 +5,10 @@
 (bind-key "C-<tab>" #'hs-toggle-hiding)
 (bind-key "C-c C-a" #'hs-show-all)
 (bind-key "C-c C-l" #'hs-hide-all)
+
+(add-hook 'prog-mode-hook #'electric-pair-local-mode)
+(add-hook 'eval-expression-minibuffer-setup-hook #'electric-pair-local-mode)
+
+(electric-indent-mode t)
+;; (setq minibuffer-default-prompt-format " [%s]")
+(minibuffer-electric-default-mode 1)

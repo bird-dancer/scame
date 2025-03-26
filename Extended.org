@@ -18,6 +18,7 @@ load this file to load all modules below
   (load "extended/spell-check.el" nil t)
   (load "extended/dired-setting.el" nil t)
   (load "extended/git.el" nil t)
+  (load "extended/multiple-cursors.el" nil t)
   (load "extended/buffer-completion-system.el" nil t)
   (load "extended/minibuffer-completion-system.el" nil t)
   (load "extended/more-packages.el" nil t)
@@ -95,7 +96,7 @@ when ~#+auto_tangle: t~ is set in the beginning of an org-file, tangle all code 
     :hook (org-mode . org-auto-tangle-mode))
 #+end_src
 
-* spell-check (melpa)
+* spell-check
 :PROPERTIES:
 :header-args: :tangle extended/spell-check.el :results silent :mkdirp yes
 :END:
@@ -193,12 +194,6 @@ highlight uncommitted, changed lines on the side of a buffer
            (dired-mode . diff-hl-dired-mode)))
 #+end_src
 
-* restclient
-manually explore and test HTTP REST webservices
-#+begin_src emacs-lisp
-  (use-package restclient
-    :defer t)
-#+end_src
 * multiple-cursors
 :PROPERTIES:
 :header-args: :tangle extended/multiple-cursors.el :results silent :mkdirp yes
@@ -277,7 +272,7 @@ for terminal use with version < 31 look into [[https://codeberg.org/akib/emacs-c
 #+end_src
 *** disable built in completion-preview-mode
 #+begin_src emacs-lisp
-  (global-completion-preview-mode nil)
+  (global-completion-preview-mode -1)
 #+end_src
 *** icons for completion candidates
 add nerd-font icons to corfu completion candidates
@@ -336,8 +331,8 @@ improve vertico and corfu completions by allowing matches to search terms differ
   (use-package vertico
     :custom
     (vertico-scroll-margin 0) ;; Different scroll margin
-    ;; (vertico-count 10) ;; Show more candidates
-    (vertico-resize nil) ;; Grow and shrink the Vertico minibuffer
+    (vertico-count 10) ;; Show more candidates
+    ;;(vertico-resize t) ;; Grow and shrink the Vertico minibuffer
     (vertico-cycle t) ;; Enable cycling for `vertico-next/previous'
     :init
     (vertico-mode))
@@ -408,6 +403,12 @@ icons for completion options
 :PROPERTIES:
 :header-args: :tangle extended/more-packages.el :results silent :mkdirp yes
 :END:
+** restclient
+manually explore and test HTTP REST webservices
+#+begin_src emacs-lisp
+  (use-package restclient
+    :defer t)
+#+end_src
 ** pdf-tools
 better interaction with pdf
 #+begin_src emacs-lisp

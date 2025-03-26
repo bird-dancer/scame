@@ -4,6 +4,7 @@
 (load "extended/spell-check.el" nil t)
 (load "extended/dired-setting.el" nil t)
 (load "extended/git.el" nil t)
+(load "extended/multiple-cursors.el" nil t)
 (load "extended/buffer-completion-system.el" nil t)
 (load "extended/minibuffer-completion-system.el" nil t)
 (load "extended/more-packages.el" nil t)

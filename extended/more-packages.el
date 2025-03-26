@@ -1,3 +1,6 @@
+(use-package restclient
+  :defer t)
+
 (use-package pdf-tools
   :if (not (file-directory-p "~/.guix-profile/share/emacs/site-lisp")) ;only install on non guix system
   :mode ("\\.pdf\\'" . pdf-view-mode))

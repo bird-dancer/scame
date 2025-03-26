@@ -105,6 +105,7 @@ prevent Emacs from adding custom settings to init.el and choose =custom.el= inst
   (setq project-mode-line t)		;show current project name is mode line
   (setq use-dialog-box nil)		;disable UI dialogs as prompts
   (global-prettify-symbols-mode t)
+  (pixel-scroll-precision-mode)
 #+end_src
 * keybindings
 :PROPERTIES:
@@ -157,7 +158,7 @@ position of the pointer to the beginning of the line with =C-S-k=
   (bind-key "C-S-k" #'kill-line-backward)
 #+end_src
 ** flymake
-finding syntax errors on the fly, also works with eglot and spellcheck (it also might be worth checking out [[https://www.flycheck.org] [Flycheck]])
+finding syntax errors on the fly, also works with eglot and spellcheck (it also might be worth checking out [[https://www.flycheck.org][Flycheck]])
 #+begin_src emacs-lisp
   (bind-key "M-n" #'flymake-goto-next-error)
   (bind-key "M-p" #'flymake-goto-prev-error)
@@ -347,12 +348,12 @@ the default trash dir is the xdg freedesktop location
 ** replace selection when typing
 typed text replaces the selection if the selection is active, pressing delete or backspace deletes the selection
 #+begin_src emacs-lisp
-  (delete-selection-mode)
+  (delete-selection-mode 1)
 #+end_src
 ** dont overwrite system clipboard
-save system clipboard before yanking
+save system clipboard (to killring) before killing anything new
 #+begin_src emacs-lisp
-  (setq save-interprogram-paste-before t)
+  (setq save-interprogram-paste-before-kill t)
 #+end_src
 ** convert region from and to hexadecimal
 *** convert region to hexadecimal
@@ -464,16 +465,17 @@ set shortcuts for fold (collapse and expand) regions of text/code-blocks
   (bind-key "C-c C-a" #'hs-show-all)
   (bind-key "C-c C-l" #'hs-hide-all)
 #+end_src
-** automatically add closing brackets, via electric-mode (disabled)
-#+begin_src emacs-lisp :tangle no
-  (add-hook 'prog-mode-hook #'electric-pair-mode)
+** automatically add closing brackets, via electric-mode
+#+begin_src emacs-lisp
+  (add-hook 'prog-mode-hook #'electric-pair-local-mode)
+  (add-hook 'eval-expression-minibuffer-setup-hook #'electric-pair-local-mode)
 #+end_src
-** auto indent (disabled)
+
+** auto indent
 auto indent
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
   (electric-indent-mode t)
-  (electric-quote-mode t)
-  					;(setq minibuffer-default-prompt-format " [%s]")
+  ;; (setq minibuffer-default-prompt-format " [%s]")
   (minibuffer-electric-default-mode 1)
 #+end_src
 
@@ -484,6 +486,11 @@ auto indent
 enable the [[https://melpa.org/#/][melpa]] repository, providing additional packages
 #+begin_src emacs-lisp
   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+  ;; prefer GNU packages over NONGNU over Melpa
+  (customize-set-variable 'package-archive-priorities
+  			'(("gnu" . 99)
+  			  ("nongnu" . 98)
+  			  ("melpa" . 97)))
   (setq use-package-always-ensure t)
 #+end_src
 

@@ -8,9 +8,9 @@
 ;; revert dired and other buffers
 (setq global-auto-revert-non-file-buffers t)
 
-(delete-selection-mode)
+(delete-selection-mode 1)
 
-(setq save-interprogram-paste-before t)
+(setq save-interprogram-paste-before-kill t)
 
 (defun scame-convert-region-decimal-to-hexadecimal (start end)
   "Convert a region from decimal to hexadecimal."
