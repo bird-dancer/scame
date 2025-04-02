@@ -230,6 +230,7 @@ highlight uncommitted, changed lines on the side of a buffer
     )
 #+end_src
 ** corfu: completion frontend popup
+TODO: enable in eval minibuffer
 for terminal use with version < 31 look into [[https://codeberg.org/akib/emacs-corfu-terminal][corfu-terminal]]
 *** corfu
 #+begin_src emacs-lisp
@@ -408,6 +409,8 @@ manually explore and test HTTP REST webservices
 #+begin_src emacs-lisp
   (use-package restclient
     :defer t)
+  (use-package jq-mode)
+  (use-package restclient-jq)
 #+end_src
 ** pdf-tools
 better interaction with pdf

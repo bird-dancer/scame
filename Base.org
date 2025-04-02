@@ -388,6 +388,10 @@ save system clipboard (to killring) before killing anything new
   (bind-key "C-c h" #'scame-convert-region-decimal-to-hexadecimal)
   (bind-key "C-c d" #'scame-convert-region-hexadecimal-to-decimal)
 #+end_src
+** message buffer scroll to bottom
+#+begin_src emacs-lisp
+  (setq scroll-conservatively 0)
+#+end_src
 ** compile-mode: scroll to bottom in compile mode output buffer
 #+begin_src emacs-lisp
   (setq compilation-scroll-output 'first-error)
@@ -485,6 +489,7 @@ auto indent
 :END:
 enable the [[https://melpa.org/#/][melpa]] repository, providing additional packages
 #+begin_src emacs-lisp
+  (require 'package)
   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
   ;; prefer GNU packages over NONGNU over Melpa
   (customize-set-variable 'package-archive-priorities

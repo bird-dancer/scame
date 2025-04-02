@@ -36,6 +36,8 @@
           (insert (format "%d" (string-to-number (substring num 2) 16)))))
       (forward-word))))
 
+(setq scroll-conservatively 0)
+
 (setq compilation-scroll-output 'first-error)
 
 (add-hook 'prog-mode-hook #'which-function-mode)
