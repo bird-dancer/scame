@@ -1,8 +1,6 @@
 (use-package magit
-  :ensure t)
-;; (use-package magit
-;; :bind (("C-x g" . magit)
-;;        ("C-x c" . magit-clone-shallow)))
+  :bind (("C-x g" . magit)
+	 ("C-x c" . magit-clone-shallow)))
 
 (use-package diff-hl
   :hook ((text-mode . diff-hl-mode)

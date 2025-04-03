@@ -1,3 +1,5 @@
+(use-package org-cliplink
+  :bind ("C-x p i" . org-cliplink))
+
 (use-package org-auto-tangle
-  :defer t
   :hook (org-mode . org-auto-tangle-mode))
