@@ -37,7 +37,7 @@ show the mode status line from doom Emacs at the bottom to provide more informat
     (setq display-time-24hr-format t)
     (display-time))
 #+end_src
-** make it so mode line can be hidden by calling =hide-mode-line=
+** make it so mode line can be hidden by calling =hide-mode-line= (disabled)
 #+begin_src emacs-lisp :tangle no
   (use-package hide-mode-line
     :defer t
@@ -49,26 +49,26 @@ show the mode status line from doom Emacs at the bottom to provide more informat
 :header-args: :tangle extended/org-mode.el :results silent :mkdirp yes
 :END:
 ** functionality
-*** org-contrib
+*** org-contrib (disabled)
 add contrib package for extra features
 #+begin_src emacs-lisp :tangle no
   (use-package org-contrib
     :after org-mode)
 #+end_src
-*** org-cliplink (melpa)
+*** org-cliplink
 give pasted links the title provided by the meta-information of the website
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
   (use-package org-cliplink
     :bind ("C-x p i" . org-cliplink))
 #+end_src
-*** ox-hugo (melpa)
+*** ox-hugo (disabled)
 export org-mode files to HTML pages using hugo
 #+begin_src emacs-lisp :tangle no
   (use-package ox-hugo
     :after org-mode
     :commands org-hugo-auto-export-mode)
 #+end_src
-*** drag-and-drop (melpa)
+*** drag-and-drop (disabled)
 enable drag-and-drop support for images and files; inserts inline previews for images and an icon+link for other media types.
 #+begin_src emacs-lisp :tangle no
   (use-package org-download
@@ -76,13 +76,13 @@ enable drag-and-drop support for images and files; inserts inline previews for i
            (dired-mode . org-download-enable)))
 #+end_src
 ** improve looks
-*** show hidden emphasis markers (melpa)
+*** show hidden emphasis markers (disabled)
 show style emphasis markers such as the * in =*bold*= when hovering over the word
 #+begin_src emacs-lisp :tangle no
   (use-package org-appear
     :hook (org-mode . org-appear-mode))
 #+end_src
-*** org-superstar (melpa)
+*** org-superstar (disabled)
 make bullet points and headings look nicer
 #+begin_src emacs-lisp :tangle no
   (use-package org-superstar
@@ -92,7 +92,6 @@ make bullet points and headings look nicer
 when ~#+auto_tangle: t~ is set in the beginning of an org-file, tangle all code blocks that are set to tangle when saving
 #+begin_src emacs-lisp
   (use-package org-auto-tangle
-    :defer t
     :hook (org-mode . org-auto-tangle-mode))
 #+end_src
 
@@ -173,10 +172,8 @@ match brackets and other delimiters by color to see the current scope more easil
 ** magit
 #+begin_src emacs-lisp
   (use-package magit
-    :ensure t)
-  ;; (use-package magit
-  ;; :bind (("C-x g" . magit)
-  ;;        ("C-x c" . magit-clone-shallow)))
+    :bind (("C-x g" . magit)
+  	 ("C-x c" . magit-clone-shallow)))
 #+end_src
 ** forge
 Forge allows you to work with Git forges, currently Github and Gitlab, from the comfort of Magit and Emacs.
@@ -200,7 +197,6 @@ highlight uncommitted, changed lines on the side of a buffer
 :END:
 #+begin_src emacs-lisp
   (use-package multiple-cursors
-    :ensure t
     :bind (("C-;" . mc/edit-lines)	;non standard
            ("C-S-c C-S-c" . mc/edit-lines)
            ("C->" . mc/mark-next-like-this)
@@ -286,7 +282,7 @@ for compatibility problems with nerd-fonts use: [[https://github.com/jdtsmith/ki
 *** corfu-popupinfo mode
 show documentation and optionally source code in pop up buffer next to auto-completion
 #+begin_src emacs-lisp
-  
+
 #+end_src
 *** if perfomance issues occur use basic completion sytle (disabled)
 #+begin_src emacs-lisp :tangle no
@@ -382,7 +378,7 @@ improve vertico and corfu completions by allowing matches to search terms differ
     ;; available in the *Completions* buffer, add it to the
     ;; `completion-list-mode-map'.
     :bind (:map minibuffer-local-map
-           ("M-A" . marginalia-cycle))
+                ("M-A" . marginalia-cycle))
 
     ;; The :init section is always executed.
     :init

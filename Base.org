@@ -210,7 +210,8 @@ add keybindings for when in eglot-mode (Emacs' built in language-server) inspire
 #+end_src
 *** ignore case
 #+begin_src emacs-lisp
-  (setq read-file-name-completion-ignore-case t)
+  (setq read-buffer-completion-ignore-case t) ;when switching buffers
+  (setq read-file-name-completion-ignore-case t) ;when finding file
 #+end_src
 ** enable completion-preview-mode
 #+begin_src emacs-lisp
