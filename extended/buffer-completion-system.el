@@ -9,28 +9,31 @@
   (add-hook 'completion-at-point-functions #'cape-file)
   (add-hook 'completion-at-point-functions #'cape-elisp-block)
   (add-hook 'completion-at-point-functions #'cape-history)
-  ;; ...
   )
 
 (use-package corfu
+  :ensure t
   ;; Optional customizations
   :custom
   (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
   ;; (corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
   ;; (corfu-quit-no-match nil)      ;; Never quit, even if there is no match
   ;; (corfu-preview-current nil)    ;; Disable current candidate preview
-  ;; (corfu-preselect ’valid)      ;; Preselect the prompt
+  ;; (corfu-preselect 'prompt)      ;; Preselect the prompt
   ;; (corfu-on-exact-match nil)     ;; Configure handling of exact matches
   (corfu-auto t)			;enable auto completion
-  (corfu-auto-delay 0)
   (corfu-auto-prefix 3)
   (corfu-quit-no-match 'separator) ;; or t
-
-  ;; (:map corfu-map ("M-SPC" . corfu-insert-separator)) ;orderless field separator
-
   :init
-  (global-corfu-mode))
+  ;; Recommended: Enable Corfu globally.  Recommended since many modes provide
+  ;; Capfs and Dabbrev can be used globally (M-/).  See also the customization
+  ;; variable `global-corfu-modes' to exclude certain modes.
+  (global-corfu-mode)
+  (corfu-history-mode)
+  (corfu-popupinfo-mode)
+  )
 
+;; A few more useful configurations...
 (use-package emacs
   :custom
   ;; TAB cycle if there are only few candidates
@@ -52,12 +55,11 @@
 (global-completion-preview-mode -1)
 
 (use-package nerd-icons-corfu
+  :after corfu
   :config
   (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
-
-
 
 (add-hook 'eshell-mode-hook (lambda ()
                               (setq-local corfu-auto t)
                               (corfu-mode)))
-(keymap-set corfu-map "RET" #'corfu-send) ;on enter select completion and execute (same as pressing enter twice)
+;; (keymap-set corfu-map "RET" #'corfu-send) ;on enter select completion and execute (same as pressing enter twice)

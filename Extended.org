@@ -90,7 +90,7 @@ make bullet points and headings look nicer
 #+end_src
 ** org-auto-tangle
 when ~#+auto_tangle: t~ is set in the beginning of an org-file, tangle all code blocks that are set to tangle when saving
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package org-auto-tangle
     :hook (org-mode . org-auto-tangle-mode))
 #+end_src
@@ -125,9 +125,12 @@ jinx spellchecking, requires (lib-)enchant using hunspell dictionaries
 #+end_src
 
 * editing-config
+:PROPERTIES:
+:header-args: :tangle extended/editing-config.el :results silent :mkdirp yes
+:END:
 ** highlight TODO
 highlight TODO FIXME etc.
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package hl-todo
     :hook ((prog-mode . hl-todo-mode)
            (org-mode . hl-todo-mode))
@@ -149,6 +152,21 @@ match brackets and other delimiters by color to see the current scope more easil
   (use-package rainbow-delimiters
     :hook (prog-mode . rainbow-delimiters-mode))
 #+end_src
+** tree-sitter
+automatically detect the appropriate tree-sitter mode dependent on the language mode and file type
+#+begin_src emacs-lisp :tangle no
+  (use-package treesit-auto
+    :custom
+    (treesit-auto-install 'prompt)
+    :config
+    (delete 'rust treesit-auto-langs)
+    (treesit-auto-add-to-auto-mode-alist 'all)
+    (global-treesit-auto-mode))
+#+end_src
+** asdf
+#+begin_src emacs-lisp
+  ;; sadf
+#+end_src
 * dired-setting
 :PROPERTIES:
 :header-args: :tangle extended/dired-setting.el :results silent :mkdirp yes
@@ -156,7 +174,7 @@ match brackets and other delimiters by color to see the current scope more easil
 *** show file icons (melpa)
 #+begin_src emacs-lisp
   (use-package all-the-icons-dired
-    :after all-the-icons
+    :after dired
     :hook (dired-mode . all-the-icons-dired-mode))
 #+end_src
 *** show sizes of folders
@@ -172,8 +190,7 @@ match brackets and other delimiters by color to see the current scope more easil
 ** magit
 #+begin_src emacs-lisp
   (use-package magit
-    :bind (("C-x g" . magit)
-  	 ("C-x c" . magit-clone-shallow)))
+    :bind (("C-x g" . magit)))
 #+end_src
 ** forge
 Forge allows you to work with Git forges, currently Github and Gitlab, from the comfort of Magit and Emacs.
@@ -183,7 +200,7 @@ Forge allows you to work with Git forges, currently Github and Gitlab, from the 
 #+end_src
 ** diff-hl
 highlight uncommitted, changed lines on the side of a buffer
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package diff-hl
     :hook ((text-mode . diff-hl-mode)
            (org-mode . diff-hl-mode)
@@ -222,14 +239,13 @@ highlight uncommitted, changed lines on the side of a buffer
     (add-hook 'completion-at-point-functions #'cape-file)
     (add-hook 'completion-at-point-functions #'cape-elisp-block)
     (add-hook 'completion-at-point-functions #'cape-history)
-    ;; ...
     )
 #+end_src
 ** corfu: completion frontend popup
 TODO: enable in eval minibuffer
 for terminal use with version < 31 look into [[https://codeberg.org/akib/emacs-corfu-terminal][corfu-terminal]]
 *** corfu
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package corfu
     ;; Optional customizations
     :custom
@@ -243,12 +259,36 @@ for terminal use with version < 31 look into [[https://codeberg.org/akib/emacs-c
     (corfu-auto-delay 0)
     (corfu-auto-prefix 3)
     (corfu-quit-no-match 'separator) ;; or t
-
     ;; (:map corfu-map ("M-SPC" . corfu-insert-separator)) ;orderless field separator
-
     :init
     (global-corfu-mode))
+#+end_src
+#+begin_src emacs-lisp
+  (use-package corfu
+    :ensure t
+    ;; Optional customizations
+    :custom
+    (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
+    ;; (corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
+    ;; (corfu-quit-no-match nil)      ;; Never quit, even if there is no match
+    ;; (corfu-preview-current nil)    ;; Disable current candidate preview
+    ;; (corfu-preselect 'prompt)      ;; Preselect the prompt
+    ;; (corfu-on-exact-match nil)     ;; Configure handling of exact matches
+    (corfu-auto t)			;enable auto completion
+    (corfu-auto-prefix 3)
+    (corfu-quit-no-match 'separator) ;; or t
+    :init
+    ;; Recommended: Enable Corfu globally.  Recommended since many modes provide
+    ;; Capfs and Dabbrev can be used globally (M-/).  See also the customization
+    ;; variable `global-corfu-modes' to exclude certain modes.
+    (global-corfu-mode)
+    (corfu-history-mode)
+    (corfu-popupinfo-mode)
+    )
+#+end_src
+#+begin_src emacs-lisp
 
+  ;; A few more useful configurations...
   (use-package emacs
     :custom
     ;; TAB cycle if there are only few candidates
@@ -275,16 +315,17 @@ for terminal use with version < 31 look into [[https://codeberg.org/akib/emacs-c
 add nerd-font icons to corfu completion candidates
 #+begin_src emacs-lisp
   (use-package nerd-icons-corfu
+    :after corfu
     :config
     (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
 #+end_src
 for compatibility problems with nerd-fonts use: [[https://github.com/jdtsmith/kind-icon][kind-icon]]
 *** corfu-popupinfo mode
 show documentation and optionally source code in pop up buffer next to auto-completion
-#+begin_src emacs-lisp
-
+#+begin_src emacs-lisp :tangle no
+  ;; asdf
 #+end_src
-*** if perfomance issues occur use basic completion sytle (disabled)
+*** if perfomance issues occur use basic completion style (disabled)
 #+begin_src emacs-lisp :tangle no
   (add-hook 'corfu-mode-hook
             (lambda ()
@@ -298,7 +339,7 @@ show documentation and optionally source code in pop up buffer next to auto-comp
   (add-hook 'eshell-mode-hook (lambda ()
                                 (setq-local corfu-auto t)
                                 (corfu-mode)))
-  (keymap-set corfu-map "RET" #'corfu-send) ;on enter select completion and execute (same as pressing enter twice)
+  ;; (keymap-set corfu-map "RET" #'corfu-send) ;on enter select completion and execute (same as pressing enter twice)
 #+end_src
 *** corfu minibuffer (disabled)
 #+begin_src emacs-lisp :tangle no
@@ -326,6 +367,7 @@ improve vertico and corfu completions by allowing matches to search terms differ
 ** vertico: performant and minimalist vertical completion UI based on the default completion system for minibuffers
 #+begin_src emacs-lisp
   (use-package vertico
+    :ensure t
     :custom
     (vertico-scroll-margin 0) ;; Different scroll margin
     (vertico-count 10) ;; Show more candidates
@@ -333,7 +375,9 @@ improve vertico and corfu completions by allowing matches to search terms differ
     (vertico-cycle t) ;; Enable cycling for `vertico-next/previous'
     :init
     (vertico-mode))
+#+end_src
 
+#+begin_src emacs-lisp
   ;; Emacs minibuffer configurations.
   (use-package emacs
     :custom
@@ -372,17 +416,16 @@ improve vertico and corfu completions by allowing matches to search terms differ
     (completion-category-overrides '((file (styles partial-completion)))))
 #+end_src
 ** marginalia
+show meta information about vertico completion options (eg. file size, last edited)
 #+begin_src emacs-lisp
   (use-package marginalia
+    :after vertico
     ;; Bind `marginalia-cycle' locally in the minibuffer.  To make the binding
     ;; available in the *Completions* buffer, add it to the
     ;; `completion-list-mode-map'.
     :bind (:map minibuffer-local-map
                 ("M-A" . marginalia-cycle))
-
-    ;; The :init section is always executed.
     :init
-
     ;; Marginalia must be activated in the :init section of use-package such that
     ;; the mode gets enabled right away. Note that this forces loading the
     ;; package.
