@@ -38,6 +38,11 @@
 
 (setq scroll-conservatively 0)
 
+(defun add-compile-command (command)
+  "add file variable with compile command"
+  (interactive "sCommand: ")
+  (add-file-local-variable-prop-line 'compile-command command))
+
 (setq compilation-scroll-output 'first-error)
 
 (add-hook 'prog-mode-hook #'which-function-mode)
