@@ -70,10 +70,9 @@ export org-mode files to HTML pages using hugo
 #+end_src
 *** drag-and-drop (disabled)
 enable drag-and-drop support for images and files; inserts inline previews for images and an icon+link for other media types.
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
   (use-package org-download
-    :hook ((org-mode . org-download-mode)
-           (dired-mode . org-download-enable)))
+    :hook ((dired-mode . org-download-enable)))
 #+end_src
 ** improve looks
 *** show hidden emphasis markers (disabled)
@@ -90,7 +89,7 @@ make bullet points and headings look nicer
 #+end_src
 ** org-auto-tangle
 when ~#+auto_tangle: t~ is set in the beginning of an org-file, tangle all code blocks that are set to tangle when saving
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
   (use-package org-auto-tangle
     :hook (org-mode . org-auto-tangle-mode))
 #+end_src
