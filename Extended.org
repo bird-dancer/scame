@@ -16,6 +16,7 @@ load this file to load all modules below
   (load "extended/mode-line.el" nil t)
   (load "extended/org-mode.el" nil t)
   (load "extended/spell-check.el" nil t)
+  (load "extended/editing-config.el" nil t)
   (load "extended/dired-setting.el" nil t)
   (load "extended/git.el" nil t)
   (load "extended/multiple-cursors.el" nil t)
@@ -153,7 +154,7 @@ match brackets and other delimiters by color to see the current scope more easil
 #+end_src
 ** tree-sitter
 automatically detect the appropriate tree-sitter mode dependent on the language mode and file type
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
   (use-package treesit-auto
     :custom
     (treesit-auto-install 'prompt)
@@ -161,10 +162,6 @@ automatically detect the appropriate tree-sitter mode dependent on the language 
     (delete 'rust treesit-auto-langs)
     (treesit-auto-add-to-auto-mode-alist 'all)
     (global-treesit-auto-mode))
-#+end_src
-** asdf
-#+begin_src emacs-lisp
-  ;; sadf
 #+end_src
 * dired-setting
 :PROPERTIES:

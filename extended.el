@@ -2,6 +2,7 @@
 (load "extended/mode-line.el" nil t)
 (load "extended/org-mode.el" nil t)
 (load "extended/spell-check.el" nil t)
+(load "extended/editing-config.el" nil t)
 (load "extended/dired-setting.el" nil t)
 (load "extended/git.el" nil t)
 (load "extended/multiple-cursors.el" nil t)
