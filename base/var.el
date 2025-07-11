@@ -47,4 +47,12 @@
 
 (add-hook 'prog-mode-hook #'which-function-mode)
 
+(defmacro with-timer (name &rest body)
+    `(let ((time (current-time)))
+       ,@body
+       (message "%s: %.06f seconds" ,name (float-time (time-since time)))))
+;; usage:
+;; (with-timer "description"
+;; 	    (command))
+
 (fset 'yes-or-no-p 'y-or-n-p)
