@@ -480,6 +480,11 @@ save system clipboard (to killring) before killing anything new
 :PROPERTIES:
 :header-args: :tangle base/editor-config.el :results silent :mkdirp yes
 :END:
+** replace selection
+typed text replaces the selection if the selection is active, pressing delete or backspace deletes the selection
+#+begin_src emacs-lisp
+  (delete-selection-mode 1)
+#+end_src
 ** folding code blocks
 set shortcuts for fold (collapse and expand) regions of text/code-blocks
 #+begin_src emacs-lisp

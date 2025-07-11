@@ -1,3 +1,5 @@
+(delete-selection-mode 1)
+
 (add-hook 'prog-mode-hook #'hs-minor-mode)
 (bind-key "C-c C-h" #'hs-hide-block)
 (bind-key "C-c C-s" #'hs-show-block)
