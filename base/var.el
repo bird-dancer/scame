@@ -55,4 +55,6 @@
 ;; (with-timer "description"
 ;; 	    (command))
 
+(add-to-list 'auto-mode-alist '("\\Makefile\\..*" . makefile-gmake-mode))
+
 (fset 'yes-or-no-p 'y-or-n-p)

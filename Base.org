@@ -418,6 +418,10 @@ save system clipboard (to killring) before killing anything new
   ;; (with-timer "description"
   ;; 	    (command))
 #+end_src
+** auto enable makefile-mode for Makefiles
+#+begin_src emacs-lisp
+  (add-to-list 'auto-mode-alist '("\\Makefile\\..*" . makefile-gmake-mode))
+#+end_src
 ** y-or-n-p makes answering questions faster
 #+begin_src emacs-lisp
   (fset 'yes-or-no-p 'y-or-n-p)
