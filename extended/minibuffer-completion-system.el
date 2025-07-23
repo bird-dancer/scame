@@ -23,21 +23,30 @@
 
 ;; Option 1: Additional bindings
 (keymap-set vertico-map "?" #'minibuffer-completion-help)
-(keymap-set vertico-map "M-RET" #'minibuffer-force-complete-and-exit)
+;; (keymap-set vertico-map "M-RET" #'minibuffer-force-complete-and-exit)
 (keymap-set vertico-map "M-TAB" #'minibuffer-complete)
+
+(keymap-set vertico-map "M-RET" #'minibuffer-complete-and-exit)
+(keymap-set vertico-map "C-j" #'minibuffer-complete-and-exit)
+(keymap-set vertico-map "C-TAB" #'minibuffer-complete)
 
 ;; Option 2: Replace `vertico-insert' to enable TAB prefix expansion.
 ;; (keymap-set vertico-map "TAB" #'minibuffer-complete)
 
-;; Optionally use the `orderless' completion style.
 (use-package orderless
-  :custom
+  ;; :custom
   ;; Configure a custom style dispatcher (see the Consult wiki)
   ;; (orderless-style-dispatchers '(+orderless-consult-dispatch orderless-affix-dispatch))
   ;; (orderless-component-separator #'orderless-escapable-split-on-space)
-  (completion-styles '(orderless basic))
-  (completion-category-defaults nil)
-  (completion-category-overrides '((file (styles partial-completion)))))
+  ;; (orderless-style-dispatchers '(orderless-affix-dispatch))
+  ;; (orderless-component-separator #'orderless-escapable-split-on-space)
+
+  ;;     (completion-styles '(orderless basic))
+  ;; (completion-category-defaults nil)
+  ;; (completion-category-overrides '((file (styles partial-completion))))
+  :config
+  (setq completion-styles '(orderless flex)
+        completion-category-overrides '((eglot (styles . (orderless flex))))))
 
 (use-package marginalia
   :after vertico
@@ -51,3 +60,16 @@
   ;; the mode gets enabled right away. Note that this forces loading the
   ;; package.
   (marginalia-mode))
+
+(use-package consult
+  :bind (("C-c r" . consult-ripgrep)
+         ;; ("C-s" . consult-line)
+	 )
+  :config
+  (keymap-set minibuffer-local-map "C-r" 'consult-history)
+  (setq completion-in-region-function #'consult-completion-in-region))
+
+(defun consult-ripgrep-current-dir (&optional dir)
+  "Search using consult-ripgrep in the specified DIR or current directory."
+  (interactive "P")
+  (consult-ripgrep (or dir default-directory)))

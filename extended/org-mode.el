@@ -2,7 +2,10 @@
   :bind ("C-x p i" . org-cliplink))
 
 (use-package org-download
-  :hook ((dired-mode . org-download-enable)))
+  ;; :hook ((org-mode . org-download-mode))
+  ;; :hook ((dired-mode . org-download-enable))
+  :config
+  (setq-default org-download-image-dir "./images"))
 
 (use-package org-auto-tangle
   :hook (org-mode . org-auto-tangle-mode))

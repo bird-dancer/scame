@@ -32,6 +32,7 @@ load this file to load all modules below
 show the mode status line from doom Emacs at the bottom to provide more information while looking nicer
 #+begin_src emacs-lisp
   (use-package doom-modeline
+    :ensure t
     :init (doom-modeline-mode t)
     :config
     (display-battery-mode)
@@ -73,7 +74,10 @@ export org-mode files to HTML pages using hugo
 enable drag-and-drop support for images and files; inserts inline previews for images and an icon+link for other media types.
 #+begin_src emacs-lisp
   (use-package org-download
-    :hook ((dired-mode . org-download-enable)))
+    ;; :hook ((org-mode . org-download-mode))
+    ;; :hook ((dired-mode . org-download-enable))
+    :config
+    (setq-default org-download-image-dir "./images"))
 #+end_src
 ** improve looks
 *** show hidden emphasis markers (disabled)
@@ -174,7 +178,7 @@ automatically detect the appropriate tree-sitter mode dependent on the language 
     :hook (dired-mode . all-the-icons-dired-mode))
 #+end_src
 *** show sizes of folders
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package dired-du
     :after dired
     :config (setq dired-du-size-format t))
@@ -196,7 +200,7 @@ Forge allows you to work with Git forges, currently Github and Gitlab, from the 
 #+end_src
 ** diff-hl
 highlight uncommitted, changed lines on the side of a buffer
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
   (use-package diff-hl
     :hook ((text-mode . diff-hl-mode)
            (org-mode . diff-hl-mode)
@@ -345,17 +349,7 @@ show documentation and optionally source code in pop up buffer next to auto-comp
                    (bound-and-true-p vertico--input)
                    (eq (current-local-map) read-passwd-map)))))
 #+end_src
-*** orderless (disabled)
-improve vertico and corfu completions by allowing matches to search terms differently ordered
-#+begin_src emacs-lisp :tangle no
-  (use-package orderless
-    :custom
-    ;; (orderless-style-dispatchers '(orderless-affix-dispatch))
-    ;; (orderless-component-separator #'orderless-escapable-split-on-space)
-    (completion-styles '(orderless basic))
-    (completion-category-defaults nil)
-    (completion-category-overrides '((file (styles partial-completion)))))
-#+end_src
+
 * minibuffer-completion-system
 :PROPERTIES:
 :header-args: :tangle extended/minibuffer-completion-system.el :results silent :mkdirp yes
@@ -392,8 +386,12 @@ for default completion commands (disabled):
 #+begin_src emacs-lisp
   ;; Option 1: Additional bindings
   (keymap-set vertico-map "?" #'minibuffer-completion-help)
-  (keymap-set vertico-map "M-RET" #'minibuffer-force-complete-and-exit)
+  ;; (keymap-set vertico-map "M-RET" #'minibuffer-force-complete-and-exit)
   (keymap-set vertico-map "M-TAB" #'minibuffer-complete)
+
+  (keymap-set vertico-map "M-RET" #'minibuffer-complete-and-exit)
+  (keymap-set vertico-map "C-j" #'minibuffer-complete-and-exit)
+  (keymap-set vertico-map "C-TAB" #'minibuffer-complete)
 
   ;; Option 2: Replace `vertico-insert' to enable TAB prefix expansion.
   ;; (keymap-set vertico-map "TAB" #'minibuffer-complete)
@@ -401,15 +399,20 @@ for default completion commands (disabled):
 ** orderless
 improve vertico and corfu completions by allowing matches to search terms differently ordered
 #+begin_src emacs-lisp
-  ;; Optionally use the `orderless' completion style.
   (use-package orderless
-    :custom
+    ;; :custom
     ;; Configure a custom style dispatcher (see the Consult wiki)
     ;; (orderless-style-dispatchers '(+orderless-consult-dispatch orderless-affix-dispatch))
     ;; (orderless-component-separator #'orderless-escapable-split-on-space)
-    (completion-styles '(orderless basic))
-    (completion-category-defaults nil)
-    (completion-category-overrides '((file (styles partial-completion)))))
+    ;; (orderless-style-dispatchers '(orderless-affix-dispatch))
+    ;; (orderless-component-separator #'orderless-escapable-split-on-space)
+
+    ;;     (completion-styles '(orderless basic))
+    ;; (completion-category-defaults nil)
+    ;; (completion-category-overrides '((file (styles partial-completion))))
+    :config
+    (setq completion-styles '(orderless flex)
+          completion-category-overrides '((eglot (styles . (orderless flex))))))
 #+end_src
 ** marginalia
 show meta information about vertico completion options (eg. file size, last edited)
@@ -435,6 +438,22 @@ icons for completion options
     :init (all-the-icons-completion-mode)
     :hook (marginalia-mode . all-the-icons-completion-marginalia-setup))
 #+end_src
+** consult: for seeing "occurrence-previews" when searching
+#+begin_src emacs-lisp
+  (use-package consult
+    :bind (("C-c r" . consult-ripgrep)
+           ;; ("C-s" . consult-line)
+  	 )
+    :config
+    (keymap-set minibuffer-local-map "C-r" 'consult-history)
+    (setq completion-in-region-function #'consult-completion-in-region))
+
+  (defun consult-ripgrep-current-dir (&optional dir)
+    "Search using consult-ripgrep in the specified DIR or current directory."
+    (interactive "P")
+    (consult-ripgrep (or dir default-directory)))
+#+end_src
+
 * more-packages
 :PROPERTIES:
 :header-args: :tangle extended/more-packages.el :results silent :mkdirp yes
@@ -444,8 +463,10 @@ manually explore and test HTTP REST webservices
 #+begin_src emacs-lisp
   (use-package restclient
     :defer t)
-  (use-package jq-mode)
-  (use-package restclient-jq)
+  (use-package jq-mode
+    :defer t)
+  (use-package restclient-jq
+    :defer t)
 #+end_src
 ** pdf-tools
 better interaction with pdf

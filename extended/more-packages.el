@@ -1,7 +1,9 @@
 (use-package restclient
   :defer t)
-(use-package jq-mode)
-(use-package restclient-jq)
+(use-package jq-mode
+  :defer t)
+(use-package restclient-jq
+  :defer t)
 
 (use-package pdf-tools
   :if (not (file-directory-p "~/.guix-profile/share/emacs/site-lisp")) ;only install on non guix system
