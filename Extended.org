@@ -177,6 +177,11 @@ automatically detect the appropriate tree-sitter mode dependent on the language 
     :after dired
     :hook (dired-mode . all-the-icons-dired-mode))
 #+end_src
+*** dired-preview
+#+begin_src emacs-lisp
+  (use-package dired-preview
+    :defer t)
+#+end_src
 *** show sizes of folders
 #+begin_src emacs-lisp :tangle no
   (use-package dired-du
