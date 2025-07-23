@@ -410,10 +410,10 @@ save system clipboard (to killring) before killing anything new
 #+end_src
 ** time command macro
 #+begin_src emacs-lisp
-    (defmacro with-timer (name &rest body)
-      `(let ((time (current-time)))
-         ,@body
-         (message "%s: %.06f seconds" ,name (float-time (time-since time)))))
+  (defmacro with-timer (name &rest body)
+    `(let ((time (current-time)))
+       ,@body
+       (message "%s: %.06f seconds" ,name (float-time (time-since time)))))
   ;; usage:
   ;; (with-timer "description"
   ;; 	    (command))
