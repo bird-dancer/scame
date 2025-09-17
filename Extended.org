@@ -156,14 +156,19 @@ match brackets and other delimiters by color to see the current scope more easil
   (use-package rainbow-delimiters
     :hook (prog-mode . rainbow-delimiters-mode))
 #+end_src
-** tree-sitter
+** expand-region
+#+begin_src emacs-lisp
+  (use-package expand-region
+    :bind ("C-=" . er/expand-region))
+#+end_src
+*** tree-sitter
 automatically detect the appropriate tree-sitter mode dependent on the language mode and file type
 #+begin_src emacs-lisp
   (use-package treesit-auto
     :custom
     (treesit-auto-install 'prompt)
     :config
-    (delete 'rust treesit-auto-langs)
+    ;; (delete 'rust treesit-auto-langs)
     (treesit-auto-add-to-auto-mode-alist 'all)
     (global-treesit-auto-mode))
 #+end_src
@@ -212,7 +217,7 @@ highlight uncommitted, changed lines on the side of a buffer
            (prog-mode . diff-hl-mode)
            (dired-mode . diff-hl-dired-mode)))
 #+end_src
-
+* editing
 * multiple-cursors
 :PROPERTIES:
 :header-args: :tangle extended/multiple-cursors.el :results silent :mkdirp yes
@@ -447,8 +452,7 @@ icons for completion options
 #+begin_src emacs-lisp
   (use-package consult
     :bind (("C-c r" . consult-ripgrep)
-           ;; ("C-s" . consult-line)
-  	 )
+           ("M-s s" . consult-line))
     :config
     (keymap-set minibuffer-local-map "C-r" 'consult-history)
     (setq completion-in-region-function #'consult-completion-in-region))
@@ -457,6 +461,8 @@ icons for completion options
     "Search using consult-ripgrep in the specified DIR or current directory."
     (interactive "P")
     (consult-ripgrep (or dir default-directory)))
+
+  (bind-key "C-c M-r" #'consult-ripgrep-current-dir)
 #+end_src
 
 * more-packages
