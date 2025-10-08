@@ -1,8 +1,8 @@
-(setq gc-cons-threshold (* 50 1000 1000))      ;500mb
-(setq read-process-output-max (* 2 1024 1024)) ; 2mb
+(setq gc-cons-threshold (* 500 1024 1024))     ;500mb
+(setq read-process-output-max (* 2 1024 1024)) ;2mb
 
 (add-hook 'after-init-hook #'(lambda ()
-                               (setq gc-cons-threshold (* 10 1000 1000)))) ;10mb
+                               (setq gc-cons-threshold (* 10 1024 1024)))) ;10mb
 
 (setq inhibit-startup-screen t)
 (setq initial-scratch-message "")	; make *scratch* buffer blank

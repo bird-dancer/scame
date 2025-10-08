@@ -48,14 +48,14 @@ load this file to load all modules below
 ** increase startup performance
 make garbage-collection less active by increasing its threshold during startup so Emacs starts up faster
 #+begin_src emacs-lisp
-  (setq gc-cons-threshold (* 50 1000 1000))      ;500mb
-  (setq read-process-output-max (* 2 1024 1024)) ; 2mb
+  (setq gc-cons-threshold (* 500 1024 1024))     ;500mb
+  (setq read-process-output-max (* 2 1024 1024)) ;2mb
 #+end_src
 ** runtime performance
 make garbage-collection pauses faster by decreasing the threshold, increasing the runtime performance
 #+begin_src emacs-lisp
   (add-hook 'after-init-hook #'(lambda ()
-                                 (setq gc-cons-threshold (* 10 1000 1000)))) ;10mb
+                                 (setq gc-cons-threshold (* 10 1024 1024)))) ;10mb
 #+end_src
 ** set startup screen to *scratch* buffer
 #+begin_src emacs-lisp
@@ -263,7 +263,7 @@ add keybindings for when in eglot-mode (Emacs' built in language-server) inspire
 *** general
 #+begin_src emacs-lisp
   (setq org-startup-indented t
-        org-pretty-entities t
+        ;; org-pretty-entities t
         org-hide-emphasis-markers t
         org-startup-with-inline-images t
         org-image-actual-width '(300))
@@ -408,7 +408,7 @@ save system clipboard (to killring) before killing anything new
 #+begin_src emacs-lisp
   (add-hook 'prog-mode-hook #'which-function-mode)
 #+end_src
-** time command macro
+** time commands via macro
 #+begin_src emacs-lisp
   (defmacro with-timer (name &rest body)
     `(let ((time (current-time)))
