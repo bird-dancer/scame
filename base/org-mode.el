@@ -23,7 +23,7 @@
             (local-set-key (kbd "M-N") 'org-move-subtree-down)))
 
 (setq org-startup-indented t
-      org-pretty-entities t
+      ;; org-pretty-entities t
       org-hide-emphasis-markers t
       org-startup-with-inline-images t
       org-image-actual-width '(300))

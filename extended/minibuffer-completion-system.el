@@ -63,7 +63,7 @@
 
 (use-package consult
   :bind (("C-c r" . consult-ripgrep)
-         ;; ("C-s" . consult-line)
+         ("C-c s" . consult-line)
 	 )
   :config
   (keymap-set minibuffer-local-map "C-r" 'consult-history)

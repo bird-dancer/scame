@@ -5,6 +5,6 @@
   :custom
   (treesit-auto-install 'prompt)
   :config
-  (delete 'rust treesit-auto-langs)
+  ;;(delete 'rust treesit-auto-langs)
   (treesit-auto-add-to-auto-mode-alist 'all)
   (global-treesit-auto-mode))

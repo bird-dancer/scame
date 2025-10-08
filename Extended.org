@@ -163,7 +163,7 @@ automatically detect the appropriate tree-sitter mode dependent on the language 
     :custom
     (treesit-auto-install 'prompt)
     :config
-    (delete 'rust treesit-auto-langs)
+    ;;(delete 'rust treesit-auto-langs)
     (treesit-auto-add-to-auto-mode-alist 'all)
     (global-treesit-auto-mode))
 #+end_src
@@ -447,7 +447,7 @@ icons for completion options
 #+begin_src emacs-lisp
   (use-package consult
     :bind (("C-c r" . consult-ripgrep)
-           ;; ("C-s" . consult-line)
+           ("C-c s" . consult-line)
   	 )
     :config
     (keymap-set minibuffer-local-map "C-r" 'consult-history)
@@ -465,6 +465,7 @@ icons for completion options
 :END:
 ** restclient
 manually explore and test HTTP REST webservices
+TODO: replace with [[https://github.com/federicotdn/verb][GitHub - federicotdn/verb: HTTP client for Emacs]]
 #+begin_src emacs-lisp
   (use-package restclient
     :defer t)
