@@ -351,7 +351,7 @@ typed text replaces the selection if the selection is active, pressing delete or
 #+begin_src emacs-lisp
   (delete-selection-mode 1)
 #+end_src
-** dont overwrite system clipboard
+** don't overwrite system clipboard
 save system clipboard (to killring) before killing anything new
 #+begin_src emacs-lisp
   (setq save-interprogram-paste-before-kill t)
@@ -426,6 +426,35 @@ save system clipboard (to killring) before killing anything new
 #+begin_src emacs-lisp
   (fset 'yes-or-no-p 'y-or-n-p)
 #+end_src
+** dired get all strings from binary file and output to org file
+echo "*" ? >> strings.org; >> strings.org; strings ? >> strings.org
+#+begin_src emacs-lisp
+  (defun scame/dired-strings-to-org ()
+    "Append file name and `strings` output for marked files in Dired to `strings.org`."
+    (interactive)
+    (let ((target-file (expand-file-name "strings.org" default-directory))
+    	(zwsp (string #x200B)))
+      (ignore-errors (move-file-to-trash target-file))
+      (dolist (file (dired-get-marked-files))
+        (with-temp-buffer
+          (insert (format "* %s\n" (file-name-nondirectory file)))
+    	(insert "#+BEGIN_SRC\n")
+  	(insert
+  	 (replace-regexp-in-string
+  	  "^\\*"
+  	  (concat zwsp "*")
+    	  (with-output-to-string
+  	    (with-current-buffer standard-output
+  	      (call-process "strings" nil t nil file)))))
+    	;; Insert zero-width space before any line that starts with *
+    	(goto-char (point-min))
+    	(insert "#+END_SRC\n")
+  	(append-to-file (point-min) (point-max) target-file)))))
+#+end_src
+#+begin_src emacs-lisp :tangle no
+  (define-key dired-mode-map (kbd "C-c s") #'my/dired-strings-to-org)
+#+end_src
+
 * dired-settings
 :PROPERTIES:
 :header-args: :tangle base/dired-settings.el :results silent :mkdirp yes

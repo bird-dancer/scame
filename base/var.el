@@ -58,3 +58,25 @@
 (add-to-list 'auto-mode-alist '("\\Makefile\\..*" . makefile-gmake-mode))
 
 (fset 'yes-or-no-p 'y-or-n-p)
+
+(defun scame/dired-strings-to-org ()
+  "Append file name and `strings` output for marked files in Dired to `strings.org`."
+  (interactive)
+  (let ((target-file (expand-file-name "strings.org" default-directory))
+  	(zwsp (string #x200B)))
+    (ignore-errors (move-file-to-trash target-file))
+    (dolist (file (dired-get-marked-files))
+      (with-temp-buffer
+        (insert (format "* %s\n" (file-name-nondirectory file)))
+  	(insert "#+BEGIN_SRC\n")
+	(insert
+	 (replace-regexp-in-string
+	  "^\\*"
+	  (concat zwsp "*")
+  	  (with-output-to-string
+	    (with-current-buffer standard-output
+	      (call-process "strings" nil t nil file)))))
+  	;; Insert zero-width space before any line that starts with *
+  	(goto-char (point-min))
+  	(insert "#+END_SRC\n")
+	(append-to-file (point-min) (point-max) target-file)))))
