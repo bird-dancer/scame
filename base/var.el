@@ -59,6 +59,9 @@
 
 (fset 'yes-or-no-p 'y-or-n-p)
 
+(setq explicit-shell-file-name (getenv "SHELL"))
+(setq shell-command-switch "-ic")
+
 (defun scame/dired-strings-to-org ()
   "Append file name and `strings` output for marked files in Dired to `strings.org`."
   (interactive)

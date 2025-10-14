@@ -426,6 +426,11 @@ save system clipboard (to killring) before killing anything new
 #+begin_src emacs-lisp
   (fset 'yes-or-no-p 'y-or-n-p)
 #+end_src
+** respect shell specific settings via .rc file and use aliases
+#+begin_src emacs-lisp
+  (setq explicit-shell-file-name (getenv "SHELL"))
+  (setq shell-command-switch "-ic")
+#+end_src
 ** dired get all strings from binary file and output to org file
 echo "*" ? >> strings.org; >> strings.org; strings ? >> strings.org
 #+begin_src emacs-lisp
