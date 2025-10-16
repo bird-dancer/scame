@@ -349,7 +349,7 @@ show documentation and optionally source code in pop up buffer next to auto-comp
   (add-hook 'eshell-mode-hook (lambda ()
                                 (setq-local corfu-auto t)
                                 (corfu-mode)))
-  ;; (keymap-set corfu-map "RET" #'corfu-send) ;on enter select completion and execute (same as pressing enter twice)
+  (keymap-set corfu-map "RET" #'corfu-send) ;on enter select completion and execute (same as pressing enter twice)
 #+end_src
 *** corfu minibuffer (disabled)
 #+begin_src emacs-lisp :tangle no

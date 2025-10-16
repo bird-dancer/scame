@@ -62,4 +62,4 @@
 (add-hook 'eshell-mode-hook (lambda ()
                               (setq-local corfu-auto t)
                               (corfu-mode)))
-;; (keymap-set corfu-map "RET" #'corfu-send) ;on enter select completion and execute (same as pressing enter twice)
+(keymap-set corfu-map "RET" #'corfu-send) ;on enter select completion and execute (same as pressing enter twice)
