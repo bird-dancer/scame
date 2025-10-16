@@ -12,7 +12,7 @@
 
 (setq save-interprogram-paste-before-kill t)
 
-(defun scame-convert-region-decimal-to-hexadecimal (start end)
+(defun scame/convert-region-decimal-to-hexadecimal (start end)
   "Convert a region from decimal to hexadecimal."
   (interactive "r")
   (save-excursion
@@ -24,7 +24,7 @@
           (insert (format "0x%x" (string-to-number num)))))
       (forward-word))))
 
-(defun scame-convert-region-hexadecimal-to-decimal (start end)
+(defun scame/convert-region-hexadecimal-to-decimal (start end)
   "Convert a region from hexadecimal to decimal."
   (interactive "r")
   (save-excursion
@@ -58,9 +58,6 @@
 (add-to-list 'auto-mode-alist '("\\Makefile\\..*" . makefile-gmake-mode))
 
 (fset 'yes-or-no-p 'y-or-n-p)
-
-(setq explicit-shell-file-name (getenv "SHELL"))
-(setq shell-command-switch "-ic")
 
 (defun scame/dired-strings-to-org ()
   "Append file name and `strings` output for marked files in Dired to `strings.org`."

@@ -118,12 +118,12 @@ prevent Emacs from adding custom settings to init.el and choose =custom.el= inst
 ** kill buffer and close window
 kill the current buffer and close its window/frame with =C-x C-k=
 #+begin_src emacs-lisp
-  (defun scame-kill-buffer-and-close-window ()
+  (defun scame/kill-buffer-and-close-window ()
     "kill current buffer and close  its window"
     (interactive)
     (kill-buffer)
     (delete-window))
-  (bind-key "C-x C-k" #'scame-kill-buffer-and-close-window)
+  (bind-key "C-x C-k" #'scame/kill-buffer-and-close-window)
 #+end_src
 ** join-lines with =C-x C-j=
 #+begin_src emacs-lisp
@@ -131,12 +131,12 @@ kill the current buffer and close its window/frame with =C-x C-k=
 #+end_src
 ** move current file to trash C-x x x x
 #+begin_src emacs-lisp
-  (defun scame-move-current-file-to-trash ()
+  (defun scame/move-current-file-to-trash ()
     (interactive)
     (when (eq major-mode 'dired-mode)
       (user-error "%s: In dired. Nothing is done." real-this-command))
     (move-file-to-trash buffer-file-name))
-  (bind-key "C-x x x" #'scame-move-current-file-to-trash)
+  (bind-key "C-x x x" #'scame/move-current-file-to-trash)
 #+end_src
 ** registers
 *** append-to-register keybinding
@@ -146,20 +146,20 @@ useful when having multiple cursors, wanting to copy from all and pasting all co
 #+end_src
 *** empty-register
 #+begin_src emacs-lisp
-  (defun scame-empty-register (register)
+  (defun scame/empty-register (register)
     "Clears out value from Emacs register."
     (interactive "cRegister: ")
     (set-register register nil))
-  (bind-key "C-x r e" #'empty-register)
+  (bind-key "C-x r e" #'scame/empty-register)
 #+end_src
 ** kill line backwards
 position of the pointer to the beginning of the line with =C-S-k=
 #+begin_src emacs-lisp
-  (defun scame-kill-line-backward ()
+  (defun scame/kill-line-backward ()
     "Kill line backwards from the position of the pointer to the beginning of the line."
     (interactive)
     (kill-line 0))
-  (bind-key "C-S-k" #'kill-line-backward)
+  (bind-key "C-S-k" #'scame/kill-line-backward)
 #+end_src
 ** flymake
 finding syntax errors on the fly, also works with eglot and spellcheck (it also might be worth checking out [[https://www.flycheck.org][Flycheck]])
@@ -185,7 +185,7 @@ add keybindings for when in eglot-mode (Emacs' built in language-server) inspire
 ** when in read only mode make navigation work without control key
 ** bind M-<backspace> to delete in the search string during isearch (doesnt work)
 #+begin_src emacs-lisp :tangle no
-  (defun scame-isearch-del-word ()
+  (defun scame/isearch-del-word ()
     "Delete the last word in the current isearch string."
     (interactive)
     (let ((len (length isearch-string)))
@@ -194,7 +194,7 @@ add keybindings for when in eglot-mode (Emacs' built in language-server) inspire
           (setq isearch-string (match-string 1 isearch-string))
         (setq isearch-string "")))
     (isearch-update))
-  (define-key isearch-mode-map (kbd "M-<backspace>") 'scame-isearch-del-word)
+  (define-key isearch-mode-map (kbd "M-<backspace>") 'scame/isearch-del-word)
 #+end_src
 
 * completion
@@ -243,10 +243,10 @@ add keybindings for when in eglot-mode (Emacs' built in language-server) inspire
 ** export
 *** when exporting org mode to latex, keep the comments
 #+begin_src emacs-lisp
-  (defun scame-transform-comments (backend)
+  (defun scame/transform-comments (backend)
     (while (re-search-forward "[:blank:]*# " nil t)
       (replace-match "#+LATEX: % ")))
-  (add-hook 'org-export-before-parsing-hook #'scame-transform-comments)
+  (add-hook 'org-export-before-parsing-hook #'scame/transform-comments)
 #+end_src
 ** replace S-M-arrow-key with S-M-{n,p,b,f}
 #+begin_src emacs-lisp
@@ -285,15 +285,15 @@ add keybindings for when in eglot-mode (Emacs' built in language-server) inspire
 ** suggest headings when inserting link
 when inserting a new link to a heading in the current document, an auto completion minibuffer will pop up, suggesting all headings in the current document. From: [[https://howardism.org/Technical/Emacs/tiddly-wiki-in-org.html][TiddlyWiki In Org]]
 #+begin_src emacs-lisp
-  (defun scame--unpropertize (string)
+  (defun scame/unpropertize (string)
     "Removes all text properties from STRING."
     (set-text-properties 0 (length string) nil string) string)
-  (defun scame--org-get-headings ()
+  (defun scame/org-get-headings ()
     "Return a list of an org document's headings."
-    (org-map-entries (lambda () (scame--unpropertize (org-get-heading t t t t)))))
-  (defun scame-org-insert-link-headline (header)
+    (org-map-entries (lambda () (scame/unpropertize (org-get-heading t t t t)))))
+  (defun scame/org-insert-link-headline (header)
     "Insert internal link to HEADER entry in current file."
-    (interactive (list (completing-read "Link: " (scame--org-get-headings) nil nil)))
+    (interactive (list (completing-read "Link: " (scame/org-get-headings) nil nil)))
     (org-insert-link nil header))
   ;; (define-key org-mode-map (kbd "C-c h") 'org-insert-link-headline)
 #+end_src
@@ -363,7 +363,7 @@ save system clipboard (to killring) before killing anything new
 ** convert region from and to hexadecimal
 *** convert region to hexadecimal
 #+begin_src emacs-lisp
-  (defun scame-convert-region-decimal-to-hexadecimal (start end)
+  (defun scame/convert-region-decimal-to-hexadecimal (start end)
     "Convert a region from decimal to hexadecimal."
     (interactive "r")
     (save-excursion
@@ -377,7 +377,7 @@ save system clipboard (to killring) before killing anything new
 #+end_src
 *** convert region from hexadecimal
 #+begin_src emacs-lisp
-  (defun scame-convert-region-hexadecimal-to-decimal (start end)
+  (defun scame/convert-region-hexadecimal-to-decimal (start end)
     "Convert a region from hexadecimal to decimal."
     (interactive "r")
     (save-excursion
@@ -390,8 +390,8 @@ save system clipboard (to killring) before killing anything new
         (forward-word))))
 #+end_src
 #+begin_src emacs-lisp :tangle no
-  (bind-key "C-c h" #'scame-convert-region-decimal-to-hexadecimal)
-  (bind-key "C-c d" #'scame-convert-region-hexadecimal-to-decimal)
+  (bind-key "C-c h" #'scame/convert-region-decimal-to-hexadecimal)
+  (bind-key "C-c d" #'scame/convert-region-hexadecimal-to-decimal)
 #+end_src
 ** message buffer scroll to bottom
 #+begin_src emacs-lisp

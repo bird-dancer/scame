@@ -1,32 +1,32 @@
-(defun scame-kill-buffer-and-close-window ()
+(defun scame/kill-buffer-and-close-window ()
   "kill current buffer and close  its window"
   (interactive)
   (kill-buffer)
   (delete-window))
-(bind-key "C-x C-k" #'scame-kill-buffer-and-close-window)
+(bind-key "C-x C-k" #'scame/kill-buffer-and-close-window)
 
 (bind-key "C-x C-j" #'join-line)
 
-(defun scame-move-current-file-to-trash ()
+(defun scame/move-current-file-to-trash ()
   (interactive)
   (when (eq major-mode 'dired-mode)
     (user-error "%s: In dired. Nothing is done." real-this-command))
   (move-file-to-trash buffer-file-name))
-(bind-key "C-x x x" #'scame-move-current-file-to-trash)
+(bind-key "C-x x x" #'scame/move-current-file-to-trash)
 
 (bind-key "C-x r a" #'append-to-register)
 
-(defun scame-empty-register (register)
+(defun scame/empty-register (register)
   "Clears out value from Emacs register."
   (interactive "cRegister: ")
   (set-register register nil))
-(bind-key "C-x r e" #'empty-register)
+(bind-key "C-x r e" #'scame/empty-register)
 
-(defun scame-kill-line-backward ()
+(defun scame/kill-line-backward ()
   "Kill line backwards from the position of the pointer to the beginning of the line."
   (interactive)
   (kill-line 0))
-(bind-key "C-S-k" #'kill-line-backward)
+(bind-key "C-S-k" #'scame/kill-line-backward)
 
 (bind-key "M-n" #'flymake-goto-next-error)
 (bind-key "M-p" #'flymake-goto-prev-error)

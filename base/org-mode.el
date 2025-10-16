@@ -4,10 +4,10 @@
 (setq org-agenda-span 20)
 (setq org-agenda-start-on-weekday nil)
 
-(defun scame-transform-comments (backend)
+(defun scame/transform-comments (backend)
   (while (re-search-forward "[:blank:]*# " nil t)
     (replace-match "#+LATEX: % ")))
-(add-hook 'org-export-before-parsing-hook #'scame-transform-comments)
+(add-hook 'org-export-before-parsing-hook #'scame/transform-comments)
 
 (add-hook 'org-mode-hook
           (lambda ()
@@ -35,15 +35,15 @@
  '(org-level-4 ((t (:height 1.1))))
  '(org-document-title ((t (:height 1.5)))))
 
-(defun scame--unpropertize (string)
+(defun scame/unpropertize (string)
   "Removes all text properties from STRING."
   (set-text-properties 0 (length string) nil string) string)
-(defun scame--org-get-headings ()
+(defun scame/org-get-headings ()
   "Return a list of an org document's headings."
-  (org-map-entries (lambda () (scame--unpropertize (org-get-heading t t t t)))))
-(defun scame-org-insert-link-headline (header)
+  (org-map-entries (lambda () (scame/unpropertize (org-get-heading t t t t)))))
+(defun scame/org-insert-link-headline (header)
   "Insert internal link to HEADER entry in current file."
-  (interactive (list (completing-read "Link: " (scame--org-get-headings) nil nil)))
+  (interactive (list (completing-read "Link: " (scame/org-get-headings) nil nil)))
   (org-insert-link nil header))
 ;; (define-key org-mode-map (kbd "C-c h") 'org-insert-link-headline)
 
