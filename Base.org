@@ -36,6 +36,7 @@ load this file to load all modules below
   (load "base/completion.el" nil t)
   (load "base/org-mode.el" nil t)
   (load "base/var.el" nil t)
+  (load "base/eshell-settings.el" nil t)
   (load "base/dired-settings.el" nil t)
   (load "base/editor-config.el" nil t)
   (load "base/melpa.el" nil t)
@@ -426,11 +427,6 @@ save system clipboard (to killring) before killing anything new
 #+begin_src emacs-lisp
   (fset 'yes-or-no-p 'y-or-n-p)
 #+end_src
-** respect shell specific settings via .rc file and use aliases
-#+begin_src emacs-lisp
-  (setq explicit-shell-file-name (getenv "SHELL"))
-  (setq shell-command-switch "-ic")
-#+end_src
 ** dired get all strings from binary file and output to org file
 echo "*" ? >> strings.org; >> strings.org; strings ? >> strings.org
 #+begin_src emacs-lisp
@@ -460,6 +456,43 @@ echo "*" ? >> strings.org; >> strings.org; strings ? >> strings.org
   (define-key dired-mode-map (kbd "C-c s") #'my/dired-strings-to-org)
 #+end_src
 
+* eshell
+:PROPERTIES:
+:header-args: :tangle base/eshell-settings.el :results silent :mkdirp yes
+:END:
+** shell-command: respect shell specific settings via .rc file and use aliases
+eg. =~/.bashrc=
+#+begin_src emacs-lisp
+  (setq explicit-shell-file-name (getenv "SHELL"))
+  (setq shell-command-switch "-ic")
+#+end_src
+** eshell specific aliases
+#+begin_src emacs-lisp
+  ;; don't scroll to bottom on clear
+  (require 'em-alias)
+  (add-to-list 'eshell-command-aliases-list (list "clear" "clear 1"))
+#+end_src
+** make eshell colorful
+#+begin_src emacs-lisp
+  (add-hook 'eshell-mode-hook
+  	  (lambda () (setenv "TERM" "xterm-256color" t)))
+#+end_src
+** eshell: use .bashrc fro aliases
+from: [[https://www.emacswiki.org/emacs/EshellAlias][EmacsWiki: Eshell Alias]]
+needs to be run everytime .shellrc file is updated
+#+begin_src emacs-lisp
+  (defun scame/eshell-load-bash-aliases ()
+    (interactive)
+    "Read Bash aliases and add them to the list of eshell aliases,
+  ensuring all arguments are passed through."
+    ;; Bash needs to be run - temporarily - interactively in order to get the list of aliases.
+    (with-temp-buffer
+      (call-process "bash" nil '(t nil) nil "-ci" "alias")
+      (goto-char (point-min))
+      (while (re-search-forward "alias \\(.+\\)='\\(.+\\)'$" nil t)
+        (eshell/alias (match-string 1) (concat (match-string 2) " $*")))))
+  ;; (add-hook 'eshell-alias-load-hook 'eshell-load-bash-aliases)
+#+end_src
 * dired-settings
 :PROPERTIES:
 :header-args: :tangle base/dired-settings.el :results silent :mkdirp yes

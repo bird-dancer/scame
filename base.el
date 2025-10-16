@@ -24,6 +24,7 @@
 (load "base/completion.el" nil t)
 (load "base/org-mode.el" nil t)
 (load "base/var.el" nil t)
+(load "base/eshell-settings.el" nil t)
 (load "base/dired-settings.el" nil t)
 (load "base/editor-config.el" nil t)
 (load "base/melpa.el" nil t)
