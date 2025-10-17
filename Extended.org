@@ -252,27 +252,7 @@ highlight uncommitted, changed lines on the side of a buffer
     )
 #+end_src
 ** corfu: completion frontend popup
-TODO: enable in eval minibuffer
-for terminal use with version < 31 look into [[https://codeberg.org/akib/emacs-corfu-terminal][corfu-terminal]]
 *** corfu
-#+begin_src emacs-lisp :tangle no
-  (use-package corfu
-    ;; Optional customizations
-    :custom
-    (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
-    ;; (corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
-    ;; (corfu-quit-no-match nil)      ;; Never quit, even if there is no match
-    ;; (corfu-preview-current nil)    ;; Disable current candidate preview
-    ;; (corfu-preselect ’valid)      ;; Preselect the prompt
-    ;; (corfu-on-exact-match nil)     ;; Configure handling of exact matches
-    (corfu-auto t)			;enable auto completion
-    (corfu-auto-delay 0)
-    (corfu-auto-prefix 3)
-    (corfu-quit-no-match 'separator) ;; or t
-    ;; (:map corfu-map ("M-SPC" . corfu-insert-separator)) ;orderless field separator
-    :init
-    (global-corfu-mode))
-#+end_src
 #+begin_src emacs-lisp
   (use-package corfu
     :ensure t
@@ -285,19 +265,19 @@ for terminal use with version < 31 look into [[https://codeberg.org/akib/emacs-c
     ;; (corfu-preselect 'prompt)      ;; Preselect the prompt
     ;; (corfu-on-exact-match nil)     ;; Configure handling of exact matches
     (corfu-auto t)			;enable auto completion
+    ;; (corfu-auto-delay 0)
     (corfu-auto-prefix 3)
     (corfu-quit-no-match 'separator) ;; or t
+    ;; (:map corfu-map ("M-SPC" . corfu-insert-separator)) ;orderless field separator
     :init
     ;; Recommended: Enable Corfu globally.  Recommended since many modes provide
     ;; Capfs and Dabbrev can be used globally (M-/).  See also the customization
     ;; variable `global-corfu-modes' to exclude certain modes.
     (global-corfu-mode)
     (corfu-history-mode)
-    (corfu-popupinfo-mode)
-    )
+    (corfu-popupinfo-mode))
 #+end_src
 #+begin_src emacs-lisp
-
   ;; A few more useful configurations...
   (use-package emacs
     :custom
@@ -316,6 +296,14 @@ for terminal use with version < 31 look into [[https://codeberg.org/akib/emacs-c
     ;; commands are hidden, since they are not used via M-x. This setting is
     ;; useful beyond Corfu.
     (read-extended-command-predicate #'command-completion-default-include-p))
+#+end_src
+*** corfu-terminal
+can be deleted for emacs version 31+
+#+begin_src emacs-lisp
+  (use-package corfu-terminal
+    :config
+    (unless (display-graphic-p)
+      (corfu-terminal-mode +1)))
 #+end_src
 *** disable built in completion-preview-mode
 #+begin_src emacs-lisp

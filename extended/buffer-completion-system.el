@@ -22,16 +22,17 @@
   ;; (corfu-preselect 'prompt)      ;; Preselect the prompt
   ;; (corfu-on-exact-match nil)     ;; Configure handling of exact matches
   (corfu-auto t)			;enable auto completion
+  ;; (corfu-auto-delay 0)
   (corfu-auto-prefix 3)
   (corfu-quit-no-match 'separator) ;; or t
+  ;; (:map corfu-map ("M-SPC" . corfu-insert-separator)) ;orderless field separator
   :init
   ;; Recommended: Enable Corfu globally.  Recommended since many modes provide
   ;; Capfs and Dabbrev can be used globally (M-/).  See also the customization
   ;; variable `global-corfu-modes' to exclude certain modes.
   (global-corfu-mode)
   (corfu-history-mode)
-  (corfu-popupinfo-mode)
-  )
+  (corfu-popupinfo-mode))
 
 ;; A few more useful configurations...
 (use-package emacs
@@ -51,6 +52,11 @@
   ;; commands are hidden, since they are not used via M-x. This setting is
   ;; useful beyond Corfu.
   (read-extended-command-predicate #'command-completion-default-include-p))
+
+(use-package corfu-terminal
+  :config
+  (unless (display-graphic-p)
+    (corfu-terminal-mode +1)))
 
 (global-completion-preview-mode -1)
 
