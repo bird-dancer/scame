@@ -1,6 +1,14 @@
 (which-key-mode t)
 
 (setq delete-by-moving-to-trash t)
+(setq remote-file-name-inhibit-delete-by-moving-to-trash t)
+
+(defun scame/dired-do-delete-permanently ()
+  "Delete marked files in Dired without moving them to Trash."
+  (interactive)
+  (let ((delete-by-moving-to-trash nil)
+        (trash-directory nil))
+    (dired-do-delete)))
 
 (save-place-mode t)
 

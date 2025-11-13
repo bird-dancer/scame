@@ -339,6 +339,16 @@ which-key is great for getting an overview of what keybindings are available bas
 the default trash dir is the xdg freedesktop location
 #+begin_src emacs-lisp
   (setq delete-by-moving-to-trash t)
+  (setq remote-file-name-inhibit-delete-by-moving-to-trash t)
+#+end_src
+** delete without moving to trash
+#+begin_src emacs-lisp
+(defun scame/dired-do-delete-permanently ()
+  "Delete marked files in Dired without moving them to Trash."
+  (interactive)
+  (let ((delete-by-moving-to-trash nil)
+        (trash-directory nil))
+    (dired-do-delete)))
 #+end_src
 ** save last location in file
 #+begin_src emacs-lisp
