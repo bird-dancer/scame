@@ -69,23 +69,42 @@
 (setq use-short-answers t)
 
 (defun scame/dired-strings-to-org ()
-  "Append file name and `strings` output for marked files in Dired to `strings.org`."
+  "Recursively append file name and `strings` output for marked files in Dired to `strings.org`.
+If a directory is marked, it processes all files within it recursively."
   (interactive)
   (let ((target-file (expand-file-name "strings.org" default-directory))
-  	(zwsp (string #x200B)))
+	(zwsp (string #x200B)))
+    ;; Clear previous output file
     (ignore-errors (move-file-to-trash target-file))
-    (dolist (file (dired-get-marked-files))
-      (with-temp-buffer
-        (insert (format "* %s\n" (file-name-nondirectory file)))
-  	(insert "#+BEGIN_SRC\n")
-	(insert
-	 (replace-regexp-in-string
-	  "^\\*"
-	  (concat zwsp "*")
-  	  (with-output-to-string
-	    (with-current-buffer standard-output
-	      (call-process "strings" nil t nil file)))))
-  	;; Insert zero-width space before any line that starts with *
-  	(goto-char (point-min))
-  	(insert "#+END_SRC\n")
-	(append-to-file (point-min) (point-max) target-file)))))
+
+    ;; Define the processor function to avoid code duplication
+    (let ((process-file-fn
+           (lambda (file)
+             ;; only process regular files, skip pipes/sockets/subdirs
+             (when (file-regular-p file)
+               (with-temp-buffer
+		 ;; Use relative path for the header so you know where the file came from
+		 (insert (format "* %s\n" (file-relative-name file default-directory)))
+		 (insert "#+BEGIN_SRC text\n")
+		 (insert
+                  (replace-regexp-in-string
+                   "^\\*"
+                   (concat zwsp "*")
+                   (with-output-to-string
+                     (with-current-buffer standard-output
+                       (call-process "strings" nil t nil file)))))
+		 ;; Ensure newline before end_src
+		 (unless (eq (char-before) ?\n) (insert "\n"))
+		 (insert "#+END_SRC\n\n")
+		 (append-to-file (point-min) (point-max) target-file))))))
+
+      ;; Iterate over marked items
+      (dolist (item (dired-get-marked-files))
+	(if (file-directory-p item)
+            ;; If it's a directory, walk it recursively
+            (dolist (subfile (directory-files-recursively item ""))
+              (funcall process-file-fn subfile))
+          ;; If it's a file, process it directly
+          (funcall process-file-fn item))))
+
+    (message "Strings extracted to %s" target-file)))

@@ -343,12 +343,12 @@ the default trash dir is the xdg freedesktop location
 #+end_src
 ** delete without moving to trash
 #+begin_src emacs-lisp
-(defun scame/dired-do-delete-permanently ()
-  "Delete marked files in Dired without moving them to Trash."
-  (interactive)
-  (let ((delete-by-moving-to-trash nil)
-        (trash-directory nil))
-    (dired-do-delete)))
+  (defun scame/dired-do-delete-permanently ()
+    "Delete marked files in Dired without moving them to Trash."
+    (interactive)
+    (let ((delete-by-moving-to-trash nil)
+          (trash-directory nil))
+      (dired-do-delete)))
 #+end_src
 ** save last location in file
 #+begin_src emacs-lisp
@@ -443,7 +443,7 @@ save system clipboard (to killring) before killing anything new
 #+end_src
 ** dired get all strings from binary file and output to org file
 echo "*" ? >> strings.org; >> strings.org; strings ? >> strings.org
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (defun scame/dired-strings-to-org ()
     "Append file name and `strings` output for marked files in Dired to `strings.org`."
     (interactive)
@@ -468,6 +468,49 @@ echo "*" ? >> strings.org; >> strings.org; strings ? >> strings.org
 #+end_src
 #+begin_src emacs-lisp :tangle no
   (define-key dired-mode-map (kbd "C-c s") #'my/dired-strings-to-org)
+#+end_src
+
+#+begin_src emacs-lisp
+  (defun scame/dired-strings-to-org ()
+    "Recursively append file name and `strings` output for marked files in Dired to `strings.org`.
+  If a directory is marked, it processes all files within it recursively."
+    (interactive)
+    (let ((target-file (expand-file-name "strings.org" default-directory))
+  	(zwsp (string #x200B)))
+      ;; Clear previous output file
+      (ignore-errors (move-file-to-trash target-file))
+
+      ;; Define the processor function to avoid code duplication
+      (let ((process-file-fn
+             (lambda (file)
+               ;; only process regular files, skip pipes/sockets/subdirs
+               (when (file-regular-p file)
+                 (with-temp-buffer
+  		 ;; Use relative path for the header so you know where the file came from
+  		 (insert (format "* %s\n" (file-relative-name file default-directory)))
+  		 (insert "#+BEGIN_SRC text\n")
+  		 (insert
+                    (replace-regexp-in-string
+                     "^\\*"
+                     (concat zwsp "*")
+                     (with-output-to-string
+                       (with-current-buffer standard-output
+                         (call-process "strings" nil t nil file)))))
+  		 ;; Ensure newline before end_src
+  		 (unless (eq (char-before) ?\n) (insert "\n"))
+  		 (insert "#+END_SRC\n\n")
+  		 (append-to-file (point-min) (point-max) target-file))))))
+
+        ;; Iterate over marked items
+        (dolist (item (dired-get-marked-files))
+  	(if (file-directory-p item)
+              ;; If it's a directory, walk it recursively
+              (dolist (subfile (directory-files-recursively item ""))
+                (funcall process-file-fn subfile))
+            ;; If it's a file, process it directly
+            (funcall process-file-fn item))))
+
+      (message "Strings extracted to %s" target-file)))
 #+end_src
 
 * eshell
