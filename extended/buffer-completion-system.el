@@ -23,6 +23,7 @@
   ;; (corfu-on-exact-match nil)     ;; Configure handling of exact matches
   (corfu-auto t)			;enable auto completion
   ;; (corfu-auto-delay 0)
+  (corfu-popupinfo-delay 0.5)
   (corfu-auto-prefix 3)
   (corfu-quit-no-match 'separator) ;; or t
   ;; (:map corfu-map ("M-SPC" . corfu-insert-separator)) ;orderless field separator

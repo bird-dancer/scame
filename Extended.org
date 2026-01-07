@@ -266,6 +266,7 @@ highlight uncommitted, changed lines on the side of a buffer
     ;; (corfu-on-exact-match nil)     ;; Configure handling of exact matches
     (corfu-auto t)			;enable auto completion
     ;; (corfu-auto-delay 0)
+    (corfu-popupinfo-delay 0.5)
     (corfu-auto-prefix 3)
     (corfu-quit-no-match 'separator) ;; or t
     ;; (:map corfu-map ("M-SPC" . corfu-insert-separator)) ;orderless field separator
@@ -472,12 +473,13 @@ TODO: replace with [[https://github.com/federicotdn/verb][GitHub - federicotdn/v
 better interaction with pdf
 #+begin_src emacs-lisp
   (use-package pdf-tools
-    :if (not (file-directory-p "~/.guix-profile/share/emacs/site-lisp")) ;only install on non guix system
+    :if (not (file-directory-p "~/.guix-profile/share/emacs/site-lisp"))
+    :config (setq pdf-tools-install-directory "~/.emacs.d/pdf-tools/")
     :mode ("\\.pdf\\'" . pdf-view-mode))
-  (use-package pdf-tools
-    :if (file-directory-p "~/.guix-profile/share/emacs/site-lisp") ;only install on guix system
-    :ensure nil
-    :load-path "~/.guix-profile/share/emacs/site-lisp/pdf-tools-1.1.0"
-    :mode ("\\.pdf\\'" . pdf-view-mode))
+  ;; (use-package pdf-tools
+  ;;   :if (file-directory-p "~/.guix-profile/share/emacs/site-lisp") ;only install on guix system
+  ;;   :ensure nil
+  ;;   :load-path "~/.guix-profile/share/emacs/site-lisp/pdf-tools-1.1.0"
+  ;;   :mode ("\\.pdf\\'" . pdf-view-mode))
 #+end_src
 
