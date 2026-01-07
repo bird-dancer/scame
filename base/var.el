@@ -65,7 +65,8 @@
 
 (add-to-list 'auto-mode-alist '("\\Makefile\\..*" . makefile-gmake-mode))
 
-(fset 'yes-or-no-p 'y-or-n-p)
+;; (fset 'yes-or-no-p 'y-or-n-p)
+(setq use-short-answers t)
 
 (defun scame/dired-strings-to-org ()
   "Append file name and `strings` output for marked files in Dired to `strings.org`."

@@ -438,7 +438,8 @@ save system clipboard (to killring) before killing anything new
 #+end_src
 ** y-or-n-p makes answering questions faster
 #+begin_src emacs-lisp
-  (fset 'yes-or-no-p 'y-or-n-p)
+  ;; (fset 'yes-or-no-p 'y-or-n-p)
+  (setq use-short-answers t)
 #+end_src
 ** dired get all strings from binary file and output to org file
 echo "*" ? >> strings.org; >> strings.org; strings ? >> strings.org
@@ -475,7 +476,7 @@ echo "*" ? >> strings.org; >> strings.org; strings ? >> strings.org
 :END:
 ** shell-command: respect shell specific settings via .rc file and use aliases
 eg. =~/.bashrc=
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (setq explicit-shell-file-name (getenv "SHELL"))
   (setq shell-command-switch "-ic")
 #+end_src
@@ -486,14 +487,14 @@ eg. =~/.bashrc=
   (add-to-list 'eshell-command-aliases-list (list "clear" "clear 1"))
 #+end_src
 ** make eshell colorful
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (add-hook 'eshell-mode-hook
   	  (lambda () (setenv "TERM" "xterm-256color" t)))
 #+end_src
 ** eshell: use .bashrc fro aliases
 from: [[https://www.emacswiki.org/emacs/EshellAlias][EmacsWiki: Eshell Alias]]
 needs to be run everytime .shellrc file is updated
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (defun scame/eshell-load-bash-aliases ()
     (interactive)
     "Read Bash aliases and add them to the list of eshell aliases,
