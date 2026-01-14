@@ -4,6 +4,7 @@
 (setq org-agenda-span 20)
 (setq org-agenda-start-on-weekday nil)
 
+;;;###autoload
 (defun scame/transform-comments (backend)
   (while (re-search-forward "[:blank:]*# " nil t)
     (replace-match "#+LATEX: % ")))
@@ -35,12 +36,15 @@
  '(org-level-4 ((t (:height 1.1))))
  '(org-document-title ((t (:height 1.5)))))
 
+;;;###autoload
 (defun scame/unpropertize (string)
   "Removes all text properties from STRING."
   (set-text-properties 0 (length string) nil string) string)
+;;;###autoload
 (defun scame/org-get-headings ()
   "Return a list of an org document's headings."
   (org-map-entries (lambda () (scame/unpropertize (org-get-heading t t t t)))))
+;;;###autoload
 (defun scame/org-insert-link-headline (header)
   "Insert internal link to HEADER entry in current file."
   (interactive (list (completing-read "Link: " (scame/org-get-headings) nil nil)))

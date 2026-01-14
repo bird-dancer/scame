@@ -3,6 +3,7 @@
 (setq delete-by-moving-to-trash t)
 (setq remote-file-name-inhibit-delete-by-moving-to-trash t)
 
+;;;###autoload
 (defun scame/dired-do-delete-permanently ()
   "Delete marked files in Dired without moving them to Trash."
   (interactive)
@@ -20,6 +21,7 @@
 
 (setq save-interprogram-paste-before-kill t)
 
+;;;###autoload
 (defun scame/convert-region-decimal-to-hexadecimal (start end)
   "Convert a region from decimal to hexadecimal."
   (interactive "r")
@@ -32,6 +34,7 @@
           (insert (format "0x%x" (string-to-number num)))))
       (forward-word))))
 
+;;;###autoload
 (defun scame/convert-region-hexadecimal-to-decimal (start end)
   "Convert a region from hexadecimal to decimal."
   (interactive "r")
@@ -46,6 +49,7 @@
 
 (setq scroll-conservatively 0)
 
+;;;###autoload
 (defun add-compile-command (command)
   "add file variable with compile command"
   (interactive "sCommand: ")
@@ -68,6 +72,7 @@
 ;; (fset 'yes-or-no-p 'y-or-n-p)
 (setq use-short-answers t)
 
+;;;###autoload
 (defun scame/dired-strings-to-org ()
   "Recursively append file name and `strings` output for marked files in Dired to `strings.org`.
 If a directory is marked, it processes all files within it recursively."

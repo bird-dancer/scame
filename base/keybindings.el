@@ -1,3 +1,4 @@
+;;;###autoload
 (defun scame/kill-buffer-and-close-window ()
   "kill current buffer and close  its window"
   (interactive)
@@ -7,6 +8,7 @@
 
 (bind-key "C-x C-j" #'join-line)
 
+;;;###autoload
 (defun scame/move-current-file-to-trash ()
   (interactive)
   (when (eq major-mode 'dired-mode)
@@ -16,12 +18,14 @@
 
 (bind-key "C-x r a" #'append-to-register)
 
+;;;###autoload
 (defun scame/empty-register (register)
   "Clears out value from Emacs register."
   (interactive "cRegister: ")
   (set-register register nil))
 (bind-key "C-x r e" #'scame/empty-register)
 
+;;;###autoload
 (defun scame/kill-line-backward ()
   "Kill line backwards from the position of the pointer to the beginning of the line."
   (interactive)
