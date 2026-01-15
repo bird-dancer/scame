@@ -101,6 +101,28 @@ when ~#+auto_tangle: t~ is set in the beginning of an org-file, tangle all code 
     :hook (org-mode . org-auto-tangle-mode))
 #+end_src
 
+** latex
+*** bibliography
+Use different bibliography processors for HTML and latex exports
+#+begin_src emacs-lisp
+  (use-package ox-latex
+    :ensure nil
+    :after org
+    :config
+    (add-to-list 'org-cite-export-processors '(html csl))
+    (add-to-list 'org-cite-export-processors '(latex biblatex))
+    ;; turn off font locking for citations so it doesnt lag. can be removed when using citar
+    (setq org-cite-activate-processor nil))
+#+end_src
+*** code blocks
+Give code blocks syntax highlighting when exporting to latex.
+#+begin_src emacs-lisp
+  (use-package engrave-faces
+    :after org
+    :config
+    (setq org-latex-src-block-backend 'engraved)
+    (add-to-list 'org-latex-packages-alist '("" "float")))
+#+end_src
 * spell-check
 :PROPERTIES:
 :header-args: :tangle extended/spell-check.el :results silent :mkdirp yes
@@ -221,7 +243,6 @@ highlight uncommitted, changed lines on the side of a buffer
            (prog-mode . diff-hl-mode)
            (dired-mode . diff-hl-dired-mode)))
 #+end_src
-* editing
 * multiple-cursors
 :PROPERTIES:
 :header-args: :tangle extended/multiple-cursors.el :results silent :mkdirp yes
