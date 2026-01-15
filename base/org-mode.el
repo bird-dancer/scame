@@ -1,3 +1,9 @@
+(use-package org
+  :ensure nil
+  :defer t
+  :config
+  (define-key org-mode-map (kbd "C-c l") 'scame/org-insert-link-headline))
+
 (global-set-key (kbd "C-c a") #'org-agenda)
 ;; make it so the agenda always starts today and we can see two weeks from today instead of just until Sunday
 (setq org-agenda-start-day "0d")
@@ -49,24 +55,27 @@
   "Insert internal link to HEADER entry in current file."
   (interactive (list (completing-read "Link: " (scame/org-get-headings) nil nil)))
   (org-insert-link nil header))
-;; (define-key org-mode-map (kbd "C-c h") 'org-insert-link-headline)
 
-(require 'org-tempo)
-(add-to-list 'org-structure-template-alist '("sh" . "src sh"))
-(add-to-list 'org-structure-template-alist '("ba" . "src bash"))
-(add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
-(add-to-list 'org-structure-template-alist '("li" . "src lisp"))
-(add-to-list 'org-structure-template-alist '("sc" . "src scheme"))
-(add-to-list 'org-structure-template-alist '("ts" . "src typescript"))
-(add-to-list 'org-structure-template-alist '("py" . "src python"))
-(add-to-list 'org-structure-template-alist '("go" . "src go"))
-(add-to-list 'org-structure-template-alist '("yaml" . "src yaml"))
-(add-to-list 'org-structure-template-alist '("json" . "src json"))
-(add-to-list 'org-structure-template-alist '("tex" . "src latex"))
-(add-to-list 'org-structure-template-alist '("rs" . "src rust"))
+(use-package org-tempo
+  :ensure nil
+  :after org
+  :config
+  (add-to-list 'org-structure-template-alist '("sh" . "src sh"))
+  (add-to-list 'org-structure-template-alist '("ba" . "src bash"))
+  (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+  (add-to-list 'org-structure-template-alist '("li" . "src lisp"))
+  (add-to-list 'org-structure-template-alist '("sc" . "src scheme"))
+  (add-to-list 'org-structure-template-alist '("ts" . "src typescript"))
+  (add-to-list 'org-structure-template-alist '("py" . "src python"))
+  (add-to-list 'org-structure-template-alist '("go" . "src go"))
+  (add-to-list 'org-structure-template-alist '("yaml" . "src yaml"))
+  (add-to-list 'org-structure-template-alist '("json" . "src json"))
+  (add-to-list 'org-structure-template-alist '("tex" . "src latex"))
+  (add-to-list 'org-structure-template-alist '("rs" . "src rust")))
 
 (setq org-confirm-babel-evaluate nil)
 
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((shell . t)))
+(with-eval-after-load 'org
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((shell . t))))

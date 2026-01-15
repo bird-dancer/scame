@@ -5,7 +5,7 @@
                                (setq gc-cons-threshold (* 10 1024 1024)))) ;10mb
 
 (setq inhibit-startup-screen t)
-(setq initial-scratch-message "")	; make *scratch* buffer blank
+(setq initial-scratch-message "")	;make *scratch* buffer blank
 
 (setq custom-file (locate-user-emacs-file "custom.el"))
 (load custom-file 'noerror 'nomessage)

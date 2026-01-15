@@ -1,3 +1,5 @@
 ;; don't scroll to bottom on clear
-(require 'em-alias)
-(add-to-list 'eshell-command-aliases-list (list "clear" "clear 1"))
+(use-package em-alias
+  :defer t
+  :config
+  (add-to-list 'eshell-command-aliases-list (list "clear" "clear 1")))

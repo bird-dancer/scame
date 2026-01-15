@@ -174,17 +174,20 @@ finding syntax errors on the fly, also works with eglot and spellcheck (it also 
 ** eglot
 add keybindings for when in eglot-mode (Emacs' built in language-server) inspired by rust-mode
 #+begin_src emacs-lisp
-  (require 'eglot)
-  (setq eglot-events-buffer-size 0) ;disable logging and improve perfomance
-  (define-key eglot-mode-map (kbd "C-c c r") #'eglot-rename)
-  (define-key eglot-mode-map (kbd "C-c c o") #'eglot-code-action-organize-imports)
-  (define-key eglot-mode-map (kbd "C-c c h") #'eldoc)
-  (define-key eglot-mode-map (kbd "C-c c a") #'eglot-code-actions)
-  (define-key eglot-mode-map (kbd "C-c c f") #'eglot-format-buffer)
-  (define-key eglot-mode-map (kbd "C-c c q") #'eglot-code-action-quickfix)
-  (define-key eglot-mode-map (kbd "C-c c e") #'eglot-code-action-extract)
-  (define-key eglot-mode-map (kbd "<f6>") #'xref-find-definitions)
-  (define-key eglot-mode-map (kbd "M-.") #'xref-find-definitions)
+  (use-package eglot
+    :defer t
+    :ensure nil
+    :config
+    (setq eglot-events-buffer-size 0) ;disable logging and improve perfomance
+    (define-key eglot-mode-map (kbd "C-c c r") #'eglot-rename)
+    (define-key eglot-mode-map (kbd "C-c c o") #'eglot-code-action-organize-imports)
+    (define-key eglot-mode-map (kbd "C-c c h") #'eldoc)
+    (define-key eglot-mode-map (kbd "C-c c a") #'eglot-code-actions)
+    (define-key eglot-mode-map (kbd "C-c c f") #'eglot-format-buffer)
+    (define-key eglot-mode-map (kbd "C-c c q") #'eglot-code-action-quickfix)
+    (define-key eglot-mode-map (kbd "C-c c e") #'eglot-code-action-extract)
+    (define-key eglot-mode-map (kbd "<f6>") #'xref-find-definitions)
+    (define-key eglot-mode-map (kbd "M-.") #'xref-find-definitions))
 #+end_src
 ** when in read only mode make navigation work without control key
 ** bind M-<backspace> to delete in the search string during isearch (doesnt work)
@@ -236,6 +239,13 @@ add keybindings for when in eglot-mode (Emacs' built in language-server) inspire
 :PROPERTIES:
 :header-args: :tangle base/org-mode.el :results silent :mkdirp yes
 :END:
+#+begin_src emacs-lisp
+  (use-package org
+    :ensure nil
+    :defer t
+    :config
+    (define-key org-mode-map (kbd "C-c l") 'scame/org-insert-link-headline))
+#+end_src
 ** org agenda
 #+begin_src emacs-lisp
   (global-set-key (kbd "C-c a") #'org-agenda)
@@ -541,8 +551,10 @@ eg. =~/.bashrc=
 ** eshell specific aliases
 #+begin_src emacs-lisp
   ;; don't scroll to bottom on clear
-  (require 'em-alias)
-  (add-to-list 'eshell-command-aliases-list (list "clear" "clear 1"))
+  (use-package em-alias
+    :defer t
+    :config
+    (add-to-list 'eshell-command-aliases-list (list "clear" "clear 1")))
 #+end_src
 ** make eshell colorful
 #+begin_src emacs-lisp :tangle no

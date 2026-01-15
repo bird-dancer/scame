@@ -35,14 +35,17 @@
 (bind-key "M-n" #'flymake-goto-next-error)
 (bind-key "M-p" #'flymake-goto-prev-error)
 
-(require 'eglot)
-(setq eglot-events-buffer-size 0) ;disable logging and improve perfomance
-(define-key eglot-mode-map (kbd "C-c c r") #'eglot-rename)
-(define-key eglot-mode-map (kbd "C-c c o") #'eglot-code-action-organize-imports)
-(define-key eglot-mode-map (kbd "C-c c h") #'eldoc)
-(define-key eglot-mode-map (kbd "C-c c a") #'eglot-code-actions)
-(define-key eglot-mode-map (kbd "C-c c f") #'eglot-format-buffer)
-(define-key eglot-mode-map (kbd "C-c c q") #'eglot-code-action-quickfix)
-(define-key eglot-mode-map (kbd "C-c c e") #'eglot-code-action-extract)
-(define-key eglot-mode-map (kbd "<f6>") #'xref-find-definitions)
-(define-key eglot-mode-map (kbd "M-.") #'xref-find-definitions)
+(use-package eglot
+  :defer t
+  :ensure nil
+  :config
+  (setq eglot-events-buffer-size 0) ;disable logging and improve perfomance
+  (define-key eglot-mode-map (kbd "C-c c r") #'eglot-rename)
+  (define-key eglot-mode-map (kbd "C-c c o") #'eglot-code-action-organize-imports)
+  (define-key eglot-mode-map (kbd "C-c c h") #'eldoc)
+  (define-key eglot-mode-map (kbd "C-c c a") #'eglot-code-actions)
+  (define-key eglot-mode-map (kbd "C-c c f") #'eglot-format-buffer)
+  (define-key eglot-mode-map (kbd "C-c c q") #'eglot-code-action-quickfix)
+  (define-key eglot-mode-map (kbd "C-c c e") #'eglot-code-action-extract)
+  (define-key eglot-mode-map (kbd "<f6>") #'xref-find-definitions)
+  (define-key eglot-mode-map (kbd "M-.") #'xref-find-definitions))
