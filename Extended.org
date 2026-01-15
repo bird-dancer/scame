@@ -55,12 +55,13 @@ show the mode status line from doom Emacs at the bottom to provide more informat
 add contrib package for extra features
 #+begin_src emacs-lisp :tangle no
   (use-package org-contrib
-    :after org-mode)
+    :after org)
 #+end_src
 *** org-cliplink
 give pasted links the title provided by the meta-information of the website
 #+begin_src emacs-lisp
   (use-package org-cliplink
+    :after org
     :bind ("C-x p i" . org-cliplink))
 #+end_src
 *** ox-hugo (disabled)
@@ -70,10 +71,11 @@ export org-mode files to HTML pages using hugo
     :after org-mode
     :commands org-hugo-auto-export-mode)
 #+end_src
-*** drag-and-drop (disabled)
+*** drag-and-drop
 enable drag-and-drop support for images and files; inserts inline previews for images and an icon+link for other media types.
 #+begin_src emacs-lisp
   (use-package org-download
+    :after org
     ;; :hook ((org-mode . org-download-mode))
     ;; :hook ((dired-mode . org-download-enable))
     :config
@@ -200,7 +202,9 @@ automatically detect the appropriate tree-sitter mode dependent on the language 
 ** magit
 #+begin_src emacs-lisp
   (use-package magit
-    :bind (("C-x g" . magit)))
+    :bind (("C-x g" . magit))
+    :config
+    (setq magit-diff-visit-prefer-worktree t))
 #+end_src
 ** forge
 Forge allows you to work with Git forges, currently Github and Gitlab, from the comfort of Magit and Emacs.
@@ -256,6 +260,7 @@ highlight uncommitted, changed lines on the side of a buffer
 #+begin_src emacs-lisp
   (use-package corfu
     :ensure t
+    :if (display-graphic-p)
     ;; Optional customizations
     :custom
     (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
@@ -276,7 +281,10 @@ highlight uncommitted, changed lines on the side of a buffer
     ;; variable `global-corfu-modes' to exclude certain modes.
     (global-corfu-mode)
     (corfu-history-mode)
-    (corfu-popupinfo-mode))
+    (corfu-popupinfo-mode) ;show documentation and optionally source code in pop up buffer next to auto-completion
+    :config
+    ;; disable built in completion-preview-mode
+    (global-completion-preview-mode -1))
 #+end_src
 #+begin_src emacs-lisp
   ;; A few more useful configurations...
@@ -299,18 +307,16 @@ highlight uncommitted, changed lines on the side of a buffer
     (read-extended-command-predicate #'command-completion-default-include-p))
 #+end_src
 *** corfu-terminal
-can be deleted for emacs version 31+
+TODO: can be deleted for Emacs version 31+
 #+begin_src emacs-lisp
   (use-package corfu-terminal
+    :if (not (display-graphic-p))
     :config
-    (unless (display-graphic-p)
-      (corfu-terminal-mode +1)))
+    (corfu-terminal-mode +1))
+  ;; (unless (display-graphic-p)
+  ;;   (corfu-terminal-mode +1)))
 #+end_src
-*** disable built in completion-preview-mode
-#+begin_src emacs-lisp
-  (global-completion-preview-mode -1)
-#+end_src
-*** icons for completion candidates
+*** nerd icons for completion candidates
 add nerd-font icons to corfu completion candidates
 #+begin_src emacs-lisp
   (use-package nerd-icons-corfu
@@ -319,11 +325,6 @@ add nerd-font icons to corfu completion candidates
     (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
 #+end_src
 for compatibility problems with nerd-fonts use: [[https://github.com/jdtsmith/kind-icon][kind-icon]]
-*** corfu-popupinfo mode
-show documentation and optionally source code in pop up buffer next to auto-completion
-#+begin_src emacs-lisp :tangle no
-  ;; asdf
-#+end_src
 *** if perfomance issues occur use basic completion style (disabled)
 #+begin_src emacs-lisp :tangle no
   (add-hook 'corfu-mode-hook
@@ -473,8 +474,8 @@ TODO: replace with [[https://github.com/federicotdn/verb][GitHub - federicotdn/v
 better interaction with pdf
 #+begin_src emacs-lisp
   (use-package pdf-tools
+    :if (display-graphic-p)
     :if (not (file-directory-p "~/.guix-profile/share/emacs/site-lisp"))
-    :config (setq pdf-tools-install-directory "~/.emacs.d/pdf-tools/")
     :mode ("\\.pdf\\'" . pdf-view-mode))
   ;; (use-package pdf-tools
   ;;   :if (file-directory-p "~/.guix-profile/share/emacs/site-lisp") ;only install on guix system

@@ -13,6 +13,7 @@
 
 (use-package corfu
   :ensure t
+  :if (display-graphic-p)
   ;; Optional customizations
   :custom
   (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
@@ -33,7 +34,10 @@
   ;; variable `global-corfu-modes' to exclude certain modes.
   (global-corfu-mode)
   (corfu-history-mode)
-  (corfu-popupinfo-mode))
+  (corfu-popupinfo-mode) ;show documentation and optionally source code in pop up buffer next to auto-completion
+  :config
+  ;; disable built in completion-preview-mode
+  (global-completion-preview-mode -1))
 
 ;; A few more useful configurations...
 (use-package emacs
@@ -55,11 +59,11 @@
   (read-extended-command-predicate #'command-completion-default-include-p))
 
 (use-package corfu-terminal
+  :if (not (display-graphic-p))
   :config
-  (unless (display-graphic-p)
-    (corfu-terminal-mode +1)))
-
-(global-completion-preview-mode -1)
+  (corfu-terminal-mode +1))
+;; (unless (display-graphic-p)
+;;   (corfu-terminal-mode +1)))
 
 (use-package nerd-icons-corfu
   :after corfu
