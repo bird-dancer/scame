@@ -180,6 +180,14 @@ match brackets and other delimiters by color to see the current scope more easil
   (use-package rainbow-delimiters
     :hook (prog-mode . rainbow-delimiters-mode))
 #+end_src
+** pulsar
+pulse highlight line when jumping between buffers etc.
+#+begin_src emacs-lisp
+  (use-package pulsar
+    :if (display-graphic-p)
+    :config
+    (pulsar-global-mode))
+#+end_src
 ** expand-region
 #+begin_src emacs-lisp
   (use-package expand-region

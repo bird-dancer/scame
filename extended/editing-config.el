@@ -1,6 +1,11 @@
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
 
+(use-package pulsar
+  :if (display-graphic-p)
+  :config
+  (pulsar-global-mode))
+
 (use-package expand-region
   :bind ("C-=" . er/expand-region))
 
