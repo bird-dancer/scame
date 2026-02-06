@@ -344,7 +344,9 @@ typing =<el= and Tab will expand to an emacs-lisp source block: =#+begin_src ema
   (with-eval-after-load 'org
     (org-babel-do-load-languages
      'org-babel-load-languages
-     '((shell . t))))
+     '((shell . t)
+       (python . t)))
+    (setq org-babel-python-command "python3"))
 #+end_src
 * var
 :PROPERTIES:
@@ -354,6 +356,47 @@ typing =<el= and Tab will expand to an emacs-lisp source block: =#+begin_src ema
 which-key is great for getting an overview of what keybindings are available based on the prefix keys you entered. It shows a table of all possible ways you can finish a shortcut after having started one
 #+begin_src emacs-lisp
   (which-key-mode t)
+#+end_src
+** save emacs command to kill ring
+*** evaluate and copy
+#+begin_src emacs-lisp
+  (defun scame/eval-save-to-kill-ring (expr)
+    "Evaluate EXPR and save the result to the kill-ring."
+    (interactive (list (read--expression "Eval to clipboard: ")))
+    (let ((result (eval expr)))
+      (kill-new (format "%s" result))
+      (message "Saved to kill-ring: %s" result)))
+
+  (global-set-key (kbd "C-c e") 'my-eval-to-kill-ring)
+#+end_src
+
+*** normal command copy
+#+begin_src emacs-lisp
+  (defun scame/execute-and-copy-message (command)
+    "Prompt for a COMMAND (like M-x), run it, and copy its echo area message to kill-ring."
+    (interactive (list (read-command "Execute and copy output: ")))
+
+    (call-interactively command)
+
+    (let ((msg (current-message)))
+      (if msg
+          (progn
+            (kill-new msg)
+            (message "Copied to clipboard: %s" msg))
+        (message "Command ran, but produced no output to copy."))))
+
+  (global-set-key (kbd "C-c x") 'scame/execute-and-copy-message)
+#+end_src
+
+** save shell command to kill ring
+#+begin_src emacs-lisp
+  ;;;###autoload
+  (defun scame/shell-output-save-to-kill-ring (command)
+    "Run COMMAND and save output to kill-ring."
+    (interactive (list (read-shell-command "Shell command (to clipboard): ")))
+    (let ((output (shell-command-to-string command)))
+      (kill-new output)
+      (message "Copied %d characters to kill-ring." (length output))))
 #+end_src
 ** move to trash instead of deleting
 the default trash dir is the xdg freedesktop location
@@ -543,6 +586,8 @@ echo "*" ? >> strings.org; >> strings.org; strings ? >> strings.org
 :PROPERTIES:
 :header-args: :tangle base/hexl.el :results silent :mkdirp yes
 :END:
+** improve address jumping
+*** idk
 #+begin_src emacs-lisp
   ;;;###autoload
   (defun scame/hexl-hex-string-to-integer (hex-string)
@@ -557,8 +602,11 @@ echo "*" ? >> strings.org; >> strings.org; strings ? >> strings.org
                          (hexl-hex-char-to-integer (string-to-char hex-string))))
         (setq hex-string (substring hex-string 1)))
       hex-num))
+#+end_src
+*** hexl-goto-address
+#+begin_src emacs-lisp
   ;;;###autoload
-  (defun scame/hexl-goto-hex-address (expr)
+  (defun scame/hexl-goto-address (expr)
     "Goto address in hexl-mode.
    - Accepts hex literals (0x...).
    - Accepts arithmetic (e.g. 0x20 + 10).
@@ -568,7 +616,7 @@ echo "*" ? >> strings.org; >> strings.org; strings ? >> strings.org
      0x100 + 7  → absolute 0x107
      +0x10      → move forward 0x10 bytes
      -32        → move back 32 bytes"
-    (interactive "sHex Address (expression): ")
+    (interactive "sAddress (expression): ")
     (require 'calc)
     (let* ((cur (hexl-current-address))
            (relative (string-match-p "\\`[+-]" expr))
@@ -583,7 +631,52 @@ echo "*" ? >> strings.org; >> strings.org; strings ? >> strings.org
            (val (string-to-number (calc-eval expr)))
            (addr (if relative (+ cur val) val)))
       (hexl-goto-address addr)))
+  (with-eval-after-load 'hexl
+    (define-key hexl-mode-map (kbd "M-j") 'scame/hexl-goto-address))
 #+end_src
+
+*** hexl-goto-hex-address
+#+begin_src emacs-lisp :tangle no
+  ;;;###autoload
+  (defun scame/hexl-goto-hex-address (expr)
+    "Goto address in hexl-mode.
+   - Accepts hex literals (0x...).
+   - Accepts arithmetic (e.g. 0x20 + 10).
+   - Supports relative jumps with +N / -N.
+   Examples:
+     0x20       → absolute 0x20
+     0x100 + 7  → absolute 0x107
+     +0x10      → move forward 0x10 bytes
+     -32        → move back 32 bytes"
+    (interactive "shexAddress (expression): ")
+    (require 'calc)
+    (let* ((cur (hexl-current-address))
+           (relative (string-match-p "\\`[+-]" expr))
+           ;; remove 0x
+           (expr (replace-regexp-in-string
+  		"0x[0-9A-Fa-f]+"
+  		(lambda (s) (format "(%d)" (string-to-number (substring s 2))))
+  		expr))
+           (val (string-to-number (calc-eval expr) 16))
+           (addr (if relative (+ cur val) val)))
+      (hexl-goto-address addr)))
+  (with-eval-after-load 'hexl
+    (define-key hexl-mode-map (kbd "M-g") 'scame/hexl-goto-hex-address))
+#+end_src
+
+** copy current address to clipboard
+#+begin_src emacs-lisp
+    ;;;###autoload
+  (defun scame/hexl-copy-current-address ()
+    (interactive)
+    (let ((select-enable-clipboard t)
+          (addr (hexl-current-address)))
+      (kill-new (format "0x%08x" addr))
+      (message "Copied address 0x%08x to clipboard" addr)))
+  (with-eval-after-load 'hexl
+    (define-key hexl-mode-map (kbd "C-c w") 'scame/hexl-copy-current-address))
+#+end_src
+
 * eshell
 :PROPERTIES:
 :header-args: :tangle base/eshell-settings.el :results silent :mkdirp yes

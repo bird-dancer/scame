@@ -1,5 +1,37 @@
 (which-key-mode t)
 
+(defun scame/eval-save-to-kill-ring (expr)
+  "Evaluate EXPR and save the result to the kill-ring."
+  (interactive (list (read--expression "Eval to clipboard: ")))
+  (let ((result (eval expr)))
+    (kill-new (format "%s" result))
+    (message "Saved to kill-ring: %s" result)))
+
+(global-set-key (kbd "C-c e") 'my-eval-to-kill-ring)
+
+(defun scame/execute-and-copy-message (command)
+  "Prompt for a COMMAND (like M-x), run it, and copy its echo area message to kill-ring."
+  (interactive (list (read-command "Execute and copy output: ")))
+
+  (call-interactively command)
+
+  (let ((msg (current-message)))
+    (if msg
+        (progn
+          (kill-new msg)
+          (message "Copied to clipboard: %s" msg))
+      (message "Command ran, but produced no output to copy."))))
+
+(global-set-key (kbd "C-c x") 'scame/execute-and-copy-message)
+
+;;;###autoload
+(defun scame/shell-output-save-to-kill-ring (command)
+  "Run COMMAND and save output to kill-ring."
+  (interactive (list (read-shell-command "Shell command (to clipboard): ")))
+  (let ((output (shell-command-to-string command)))
+    (kill-new output)
+    (message "Copied %d characters to kill-ring." (length output))))
+
 (setq delete-by-moving-to-trash t)
 (setq remote-file-name-inhibit-delete-by-moving-to-trash t)
 

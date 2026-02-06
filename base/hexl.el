@@ -11,8 +11,9 @@
                        (hexl-hex-char-to-integer (string-to-char hex-string))))
       (setq hex-string (substring hex-string 1)))
     hex-num))
+
 ;;;###autoload
-(defun scame/hexl-goto-hex-address (expr)
+(defun scame/hexl-goto-address (expr)
   "Goto address in hexl-mode.
  - Accepts hex literals (0x...).
  - Accepts arithmetic (e.g. 0x20 + 10).
@@ -22,7 +23,7 @@
    0x100 + 7  → absolute 0x107
    +0x10      → move forward 0x10 bytes
    -32        → move back 32 bytes"
-  (interactive "sHex Address (expression): ")
+  (interactive "sAddress (expression): ")
   (require 'calc)
   (let* ((cur (hexl-current-address))
          (relative (string-match-p "\\`[+-]" expr))
@@ -37,3 +38,15 @@
          (val (string-to-number (calc-eval expr)))
          (addr (if relative (+ cur val) val)))
     (hexl-goto-address addr)))
+(with-eval-after-load 'hexl
+  (define-key hexl-mode-map (kbd "M-j") 'scame/hexl-goto-address))
+
+;;;###autoload
+(defun scame/hexl-copy-current-address ()
+  (interactive)
+  (let ((select-enable-clipboard t)
+        (addr (hexl-current-address)))
+    (kill-new (format "0x%08x" addr))
+    (message "Copied address 0x%08x to clipboard" addr)))
+(with-eval-after-load 'hexl
+  (define-key hexl-mode-map (kbd "C-c w") 'scame/hexl-copy-current-address))
