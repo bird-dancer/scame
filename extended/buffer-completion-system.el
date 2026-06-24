@@ -36,6 +36,10 @@
   (corfu-history-mode)
   (corfu-popupinfo-mode) ;show documentation and optionally source code in pop up buffer next to auto-completion
   :config
+  (add-hook 'eshell-mode-hook (lambda ()
+				(setq-local corfu-auto t)
+				(corfu-mode)))
+  (keymap-set corfu-map "RET" #'corfu-send) ;on enter select completion and execute (same as pressing enter twice)
   ;; disable built in completion-preview-mode
   (global-completion-preview-mode -1))
 
@@ -69,8 +73,3 @@
   :after corfu
   :config
   (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
-
-(add-hook 'eshell-mode-hook (lambda ()
-                              (setq-local corfu-auto t)
-                              (corfu-mode)))
-(keymap-set corfu-map "RET" #'corfu-send) ;on enter select completion and execute (same as pressing enter twice)

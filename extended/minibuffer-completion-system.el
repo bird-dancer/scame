@@ -21,18 +21,6 @@
   (minibuffer-prompt-properties
    '(read-only t cursor-intangible t face minibuffer-prompt)))
 
-;; Option 1: Additional bindings
-(keymap-set vertico-map "?" #'minibuffer-completion-help)
-;; (keymap-set vertico-map "M-RET" #'minibuffer-force-complete-and-exit)
-(keymap-set vertico-map "M-TAB" #'minibuffer-complete)
-
-(keymap-set vertico-map "M-RET" #'minibuffer-complete-and-exit)
-(keymap-set vertico-map "C-j" #'minibuffer-complete-and-exit)
-(keymap-set vertico-map "C-TAB" #'minibuffer-complete)
-
-;; Option 2: Replace `vertico-insert' to enable TAB prefix expansion.
-;; (keymap-set vertico-map "TAB" #'minibuffer-complete)
-
 (use-package orderless
   ;; :custom
   ;; Configure a custom style dispatcher (see the Consult wiki)

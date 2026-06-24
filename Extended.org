@@ -22,6 +22,7 @@ load this file to load all modules below
   (load "extended/multiple-cursors.el" nil t)
   (load "extended/buffer-completion-system.el" nil t)
   (load "extended/minibuffer-completion-system.el" nil t)
+  (load "extended/development.el" nil t)
   (load "extended/more-packages.el" nil t)
 #+end_src
 * mode-line
@@ -35,7 +36,7 @@ show the mode status line from doom Emacs at the bottom to provide more informat
     :ensure t
     :init (doom-modeline-mode t)
     :config
-    (display-battery-mode)
+    (display-battery-mode 1)
     (setq display-time-24hr-format t)
     (display-time))
 #+end_src
@@ -117,12 +118,43 @@ Use different bibliography processors for HTML and latex exports
 *** code blocks
 Give code blocks syntax highlighting when exporting to latex.
 #+begin_src emacs-lisp
+  (setq org-src-fontify-natively t
+        org-src-tab-acts-natively t)
+  ;; org-src-preserve-indentation t)
+#+end_src
+#+begin_src emacs-lisp :tangle no
   (use-package engrave-faces
     :after org
     :config
     (setq org-latex-src-block-backend 'engraved)
     (add-to-list 'org-latex-packages-alist '("" "float")))
 #+end_src
+#+begin_src emacs-lisp
+  (with-eval-after-load 'org
+    (modify-syntax-entry ?< "." org-mode-syntax-table)
+    (modify-syntax-entry ?> "." org-mode-syntax-table))
+#+end_src
+
+#+begin_src emacs-lisp
+  (setq org-latex-src-block-backend 'minted)
+  (with-eval-after-load 'org
+    (add-to-list 'org-latex-packages-alist '("" "minted")))
+
+  (setq org-latex-minted-options
+        '(("breaklines" "true")          ;; Enables line wrapping
+          ;; ("breakanywhere" "true")       ;; Allows breaking in the middle of long strings/hex values
+          ;; ("style" "tango")              ;; A clean, readable color theme (or try "colorful", "monokai")
+          ;; ("fontsize" "\\footnotesize")  ;; Slightly smaller font to fit more code
+  	("xleftmargin" "-35pt")  ;; Pushes the left border outward (or use negative like "-10pt" to pull it into the margin)
+  	("xrightmargin" "-35pt") ;; Pushes the right border outward
+          ("frame" "single")             ;; Adds a neat box around the code block
+  	;; ("linenos" "true")
+  	;; ("numberstyle" "\\normalsize\\ttfamily")
+  	;; ("numbersep" "10pt")
+  	))
+  ;; Optional: Adds line numbers
+#+end_src
+
 * spell-check
 :PROPERTIES:
 :header-args: :tangle extended/spell-check.el :results silent :mkdirp yes
@@ -263,7 +295,7 @@ highlight uncommitted, changed lines on the side of a buffer
            ("C->" . mc/mark-next-like-this)
            ("C-<" . mc/mark-previous-like-this)
            ("C-c C-<" . mc/mark-all-like-this))
-    :config
+    :init
     ;; or else cursors dont show up when style is bar
     (setq mc/match-cursor-style nil))
 #+end_src
@@ -314,6 +346,10 @@ highlight uncommitted, changed lines on the side of a buffer
     (corfu-history-mode)
     (corfu-popupinfo-mode) ;show documentation and optionally source code in pop up buffer next to auto-completion
     :config
+    (add-hook 'eshell-mode-hook (lambda ()
+  				(setq-local corfu-auto t)
+  				(corfu-mode)))
+    (keymap-set corfu-map "RET" #'corfu-send) ;on enter select completion and execute (same as pressing enter twice)
     ;; disable built in completion-preview-mode
     (global-completion-preview-mode -1))
 #+end_src
@@ -366,12 +402,6 @@ for compatibility problems with nerd-fonts use: [[https://github.com/jdtsmith/ki
                           completion-category-defaults nil)))
 #+end_src
 *** completing in the eshell or shell
-#+begin_src emacs-lisp
-  (add-hook 'eshell-mode-hook (lambda ()
-                                (setq-local corfu-auto t)
-                                (corfu-mode)))
-  (keymap-set corfu-map "RET" #'corfu-send) ;on enter select completion and execute (same as pressing enter twice)
-#+end_src
 *** corfu minibuffer (disabled)
 #+begin_src emacs-lisp :tangle no
   (setq global-corfu-minibuffer
@@ -414,7 +444,7 @@ for compatibility problems with nerd-fonts use: [[https://github.com/jdtsmith/ki
 #+end_src
 
 for default completion commands (disabled):
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   ;; Option 1: Additional bindings
   (keymap-set vertico-map "?" #'minibuffer-completion-help)
   ;; (keymap-set vertico-map "M-RET" #'minibuffer-force-complete-and-exit)
@@ -486,6 +516,24 @@ icons for completion options
   (bind-key "C-c M-r" #'consult-ripgrep-current-dir)
 #+end_src
 
+* development
+:PROPERTIES:
+:header-args: :tangle extended/development.el :results silent :mkdirp yes
+:END:
+** java
+#+begin_src emacs-lisp
+  (use-package eglot-java
+    :defer t)
+#+end_src
+** python
+#+begin_src emacs-lisp
+  (use-package auto-virtualenv
+    :config
+    (setq auto-virtualenv-verbose t)
+    (auto-virtualenv-setup))
+  (use-package indent-bars
+    :hook (python-ts-mode . indent-bars-mode))
+#+end_src
 * more-packages
 :PROPERTIES:
 :header-args: :tangle extended/more-packages.el :results silent :mkdirp yes

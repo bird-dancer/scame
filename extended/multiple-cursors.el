@@ -5,6 +5,6 @@
          ("C->" . mc/mark-next-like-this)
          ("C-<" . mc/mark-previous-like-this)
          ("C-c C-<" . mc/mark-all-like-this))
-  :config
+  :init
   ;; or else cursors dont show up when style is bar
   (setq mc/match-cursor-style nil))

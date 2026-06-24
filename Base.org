@@ -105,7 +105,6 @@ prevent Emacs from adding custom settings to init.el and choose =custom.el= inst
   (global-hl-line-mode t)		 ;highlight current line
   (setq project-mode-line t)     ;show current project name is mode line
   (setq use-dialog-box nil)      ;disable UI dialogs as prompts
-  (global-prettify-symbols-mode t)
   (pixel-scroll-precision-mode)
 #+end_src
 ** line-numbers
@@ -190,7 +189,6 @@ add keybindings for when in eglot-mode (Emacs' built in language-server) inspire
     (define-key eglot-mode-map (kbd "<f6>") #'xref-find-definitions)
     (define-key eglot-mode-map (kbd "M-.") #'xref-find-definitions))
 #+end_src
-** when in read only mode make navigation work without control key
 ** bind M-<backspace> to delete in the search string during isearch (doesnt work)
 #+begin_src emacs-lisp :tangle no
   ;;;###autoload
@@ -352,6 +350,34 @@ typing =<el= and Tab will expand to an emacs-lisp source block: =#+begin_src ema
 :PROPERTIES:
 :header-args: :tangle base/var.el :results silent :mkdirp yes
 :END:
+** projectile custom root
+#+begin_src emacs-lisp
+  (setq project-vc-extra-root-markers '(".projectile"))
+#+end_src
+#+begin_src emacs-lisp
+  ;;;###autoload
+  (defun touch-file (path)
+    "Create PATH if it doesn't exist, or update its modification time to now.
+  When called interactively, prompt for PATH."
+    (interactive "FTouch file: ")
+    (if (file-exists-p path)
+        (set-file-times path)                 ; update mtime to now
+      (with-temp-buffer
+        (write-region (point-min) (point-min) path))) ; create empty file
+    path)
+#+end_src
+#+begin_src emacs-lisp
+  ;;;###autoload
+  (defun scame/projectile-init ()
+    (interactive)
+    (touch-file ".projectile"))
+#+end_src
+** use tramp specific history
+#+begin_src emacs-lisp :tangle no
+  (setq tramp-remote-process-environment
+        (cons "HISTFILE=~/.tramp_history"
+              (delete "HISTFILE=/dev/null" tramp-remote-process-environment)))
+#+end_src
 ** which-key mode
 which-key is great for getting an overview of what keybindings are available based on the prefix keys you entered. It shows a table of all possible ways you can finish a shortcut after having started one
 #+begin_src emacs-lisp
@@ -762,6 +788,10 @@ needs to be run everytime .shellrc file is updated
 #+begin_src emacs-lisp
   (setq dired-dwim-target t)
 #+end_src
+** allow editing permissions
+#+begin_src emacs-lisp
+  (setq wdired-allow-to-change-permissions t)
+#+end_src
 ** always copy directories recursivly
 #+begin_src emacs-lisp
   (setq dired-recursive-copies 'always)
@@ -807,9 +837,10 @@ auto indent
 :END:
 enable the [[https://melpa.org/#/][melpa]] repository, providing additional packages
 #+begin_src emacs-lisp
-  (require 'use-package)
+  (setq package-install-upgrade-built-in t)
+  (require 'package)
+  (use-package use-package-ensure-system-package)
   (setq use-package-always-ensure t)
-  ;; (use-package use-package-ensure-system-package)
   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
   ;; prefer GNU packages over NONGNU over Melpa
   (customize-set-variable 'package-archive-priorities

@@ -8,4 +8,5 @@
 (load "extended/multiple-cursors.el" nil t)
 (load "extended/buffer-completion-system.el" nil t)
 (load "extended/minibuffer-completion-system.el" nil t)
+(load "extended/development.el" nil t)
 (load "extended/more-packages.el" nil t)

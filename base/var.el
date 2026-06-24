@@ -1,3 +1,21 @@
+(setq project-vc-extra-root-markers '(".projectile"))
+
+;;;###autoload
+(defun touch-file (path)
+  "Create PATH if it doesn't exist, or update its modification time to now.
+When called interactively, prompt for PATH."
+  (interactive "FTouch file: ")
+  (if (file-exists-p path)
+      (set-file-times path)                 ; update mtime to now
+    (with-temp-buffer
+      (write-region (point-min) (point-min) path))) ; create empty file
+  path)
+
+;;;###autoload
+(defun scame/projectile-init ()
+  (interactive)
+  (touch-file ".projectile"))
+
 (which-key-mode t)
 
 (defun scame/eval-save-to-kill-ring (expr)
