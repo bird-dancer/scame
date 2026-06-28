@@ -36,7 +36,7 @@ show the mode status line from doom Emacs at the bottom to provide more informat
     :ensure t
     :init (doom-modeline-mode t)
     :config
-    (display-battery-mode 1)
+    (display-battery-mode 0)
     (setq display-time-24hr-format t)
     (display-time))
 #+end_src
@@ -520,6 +520,20 @@ icons for completion options
 :PROPERTIES:
 :header-args: :tangle extended/development.el :results silent :mkdirp yes
 :END:
+** nix-ts-mode
+#+begin_src emacs-lisp
+  (use-package nix-ts-mode
+    :mode ("\\.nix\\'" . nix-ts-mode))
+#+end_src
+** erlang
+#+begin_src emacs-lisp
+  (with-eval-after-load 'eglot
+    (add-to-list 'eglot-server-programs
+      	       '(erlang-ts-mode . ("elp" "server"))))
+  (with-eval-after-load 'eglot
+    (add-to-list 'eglot-server-programs
+       	       '(erlang-mode . ("elp" "server"))))
+#+end_src
 ** java
 #+begin_src emacs-lisp
   (use-package eglot-java
@@ -548,6 +562,22 @@ TODO: replace with [[https://github.com/federicotdn/verb][GitHub - federicotdn/v
     :defer t)
   (use-package restclient-jq
     :defer t)
+#+end_src
+** ghostel terminal
+#+begin_src emacs-lisp
+  (use-package ghostel
+    :bind(("C-c c c" . ghostel-compile)
+        	("C-c C-c c" . ghostel-compile)
+        	("C-c C-c r" . ghostel-recompile)
+        	("C-c C-c d" . ghostel-compile-debug)
+  	("C-M-<return>" . ghostel))
+    :config
+    (setq ghostel-progress-function #'ghostel-spinner-progress)
+    ;; (setq ghostel-progress-function #'ghostel-default-progress)
+    (setq ghostel-spinner-type 'horizontal-moving)
+    ;; make cursor bar
+    (setq ghostel-ignore-cursor-change t)
+    (ghostel--set-cursor-style 0 t))
 #+end_src
 ** pdf-tools
 better interaction with pdf
