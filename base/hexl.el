@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t; -*-
 ;;;###autoload
 (defun scame/hexl-hex-string-to-integer (hex-string)
   "Return decimal integer for HEX-STRING.

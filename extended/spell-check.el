@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t; -*-
 ;; use on normal systems
 (use-package jinx
   :if (not (file-directory-p "~/.guix-profile/share/emacs/site-lisp")) ;only install on non guix system

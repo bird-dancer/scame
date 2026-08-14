@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t; -*-
 (use-package cape
   :bind ("C-c p" . cape-prefix-map)
   :init

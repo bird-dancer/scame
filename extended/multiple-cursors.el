@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t; -*-
 (setq mc/always-run-for-all t)
 (use-package multiple-cursors
   :bind (("C-;" . mc/edit-lines)	;non standard

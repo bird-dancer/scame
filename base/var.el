@@ -1,3 +1,6 @@
+;; -*- lexical-binding: t; -*-
+(setq dired-isearch-filenames 'dwim)
+
 (setq project-vc-extra-root-markers '(".projectile"))
 
 ;;;###autoload
@@ -104,8 +107,6 @@ When called interactively, prompt for PATH."
   "add file variable with compile command"
   (interactive "sCommand: ")
   (add-file-local-variable-prop-line 'compile-command command))
-
-(setq compilation-scroll-output 'first-error)
 
 (add-hook 'prog-mode-hook #'which-function-mode)
 

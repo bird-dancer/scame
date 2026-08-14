@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t; -*-
 (setq gc-cons-threshold (* 500 1024 1024))     ;500mb
 (setq read-process-output-max (* 2 1024 1024)) ;2mb
 

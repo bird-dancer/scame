@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t; -*-
 (delete-selection-mode 1)
 
 (add-hook 'prog-mode-hook #'hs-minor-mode)

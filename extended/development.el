@@ -1,5 +1,12 @@
+;; -*- lexical-binding: t; -*-
 (use-package nix-ts-mode
   :mode ("\\.nix\\'" . nix-ts-mode))
+
+(use-package gleam-ts-mode
+  :mode ("\\.gleam\\'" . gleam-ts-mode))
+(with-eval-after-load 'eglot
+  (add-to-list 'eglot-server-programs
+       	       '(gleam-ts-mode . ("gleam" "lsp"))))
 
 (with-eval-after-load 'eglot
   (add-to-list 'eglot-server-programs

@@ -3,6 +3,7 @@
 #+LICENSE: LGPLv3+
 #+STARTUP: fold
 #+auto_tangle: t
+#+PROPERTY: header-args:emacs-lisp :shebang ";; -*- lexical-binding: t; -*-"
 
 this is an extension and includes functionality provided by external packages and configures them
 
@@ -268,6 +269,12 @@ automatically detect the appropriate tree-sitter mode dependent on the language 
     :config
     (setq magit-diff-visit-prefer-worktree t))
 #+end_src
+** magit-todos
+#+begin_src emacs-lisp
+  (use-package magit-todos
+    :after magit
+    :config (magit-todos-mode 1))
+#+end_src
 ** forge
 Forge allows you to work with Git forges, currently Github and Gitlab, from the comfort of Magit and Emacs.
 #+begin_src emacs-lisp :tangle no
@@ -525,6 +532,14 @@ icons for completion options
   (use-package nix-ts-mode
     :mode ("\\.nix\\'" . nix-ts-mode))
 #+end_src
+** gleam
+#+begin_src emacs-lisp
+  (use-package gleam-ts-mode
+    :mode ("\\.gleam\\'" . gleam-ts-mode))
+  (with-eval-after-load 'eglot
+    (add-to-list 'eglot-server-programs
+         	       '(gleam-ts-mode . ("gleam" "lsp"))))
+#+end_src
 ** erlang
 #+begin_src emacs-lisp
   (with-eval-after-load 'eglot
@@ -563,29 +578,14 @@ TODO: replace with [[https://github.com/federicotdn/verb][GitHub - federicotdn/v
   (use-package restclient-jq
     :defer t)
 #+end_src
-** ghostel terminal
-#+begin_src emacs-lisp
-  (use-package ghostel
-    :bind(("C-c c c" . ghostel-compile)
-        	("C-c C-c c" . ghostel-compile)
-        	("C-c C-c r" . ghostel-recompile)
-        	("C-c C-c d" . ghostel-compile-debug)
-  	("C-M-<return>" . ghostel))
-    :config
-    (setq ghostel-progress-function #'ghostel-spinner-progress)
-    ;; (setq ghostel-progress-function #'ghostel-default-progress)
-    (setq ghostel-spinner-type 'horizontal-moving)
-    ;; make cursor bar
-    (setq ghostel-ignore-cursor-change t)
-    (ghostel--set-cursor-style 0 t))
-#+end_src
 ** pdf-tools
 better interaction with pdf
 #+begin_src emacs-lisp
   (use-package pdf-tools
+    :ensure t
     :if (display-graphic-p)
-    :if (not (file-directory-p "~/.guix-profile/share/emacs/site-lisp"))
-    :mode ("\\.pdf\\'" . pdf-view-mode))
+    :mode ("\\.pdf\\'" . pdf-view-mode)
+    :hook (pdf-view-mode . pdf-isearch-minor-mode))
   ;; (use-package pdf-tools
   ;;   :if (file-directory-p "~/.guix-profile/share/emacs/site-lisp") ;only install on guix system
   ;;   :ensure nil

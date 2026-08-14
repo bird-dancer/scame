@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t; -*-
 (setq completions-sort 'historical)
 ;;(setq history-length 50)
 (savehist-mode t)

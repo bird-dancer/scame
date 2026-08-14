@@ -1,7 +1,12 @@
+;; -*- lexical-binding: t; -*-
 (use-package magit
   :bind (("C-x g" . magit))
   :config
   (setq magit-diff-visit-prefer-worktree t))
+
+(use-package magit-todos
+  :after magit
+  :config (magit-todos-mode 1))
 
 (use-package diff-hl
   :hook ((text-mode . diff-hl-mode)

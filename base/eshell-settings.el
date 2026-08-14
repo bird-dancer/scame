@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t; -*-
 ;; don't scroll to bottom on clear
 (use-package em-alias
   :defer t

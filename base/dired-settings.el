@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t; -*-
 (setq dired-recursive-deletes 'always)
 
 (setq dired-listing-switches "-alh")

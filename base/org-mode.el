@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t; -*-
 (use-package org
   :ensure nil
   :defer t
@@ -30,17 +31,17 @@
             (local-set-key (kbd "M-N") 'org-move-subtree-down)))
 
 (setq org-startup-indented t
-      ;; org-pretty-entities t
-      org-hide-emphasis-markers t
+      org-pretty-entities t
+      ;; org-hide-emphasis-markers t
       org-startup-with-inline-images t
       org-image-actual-width '(300))
 
 (custom-set-faces
- '(org-level-1 ((t (:height 1.75))))
- '(org-level-2 ((t (:height 1.5))))
+ '(org-level-1 ((t (:height 1.5))))
+ '(org-level-2 ((t (:height 1.35))))
  '(org-level-3 ((t (:height 1.25))))
  '(org-level-4 ((t (:height 1.1))))
- '(org-document-title ((t (:height 1.5)))))
+ '(org-document-title ((t (:height 1.45)))))
 
 ;;;###autoload
 (defun scame/unpropertize (string)

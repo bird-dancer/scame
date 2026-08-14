@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t; -*-
 (use-package org-cliplink
   :after org
   :bind ("C-x p i" . org-cliplink))

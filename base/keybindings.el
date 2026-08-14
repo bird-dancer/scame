@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t; -*-
 ;;;###autoload
 (defun scame/kill-buffer-and-close-window ()
   "kill current buffer and close  its window"
@@ -6,7 +7,7 @@
   (delete-window))
 (bind-key "C-x C-k" #'scame/kill-buffer-and-close-window)
 
-(bind-key "C-x C-j" #'join-line)
+(bind-key "C-x j" #'join-line)
 
 ;;;###autoload
 (defun scame/move-current-file-to-trash ()

@@ -3,6 +3,7 @@
 #+LICENSE: LGPLv3+
 #+STARTUP: fold
 #+auto_tangle: t
+#+PROPERTY: header-args:emacs-lisp :shebang ";; -*- lexical-binding: t; -*-"
 
 * base.el
 :PROPERTIES:
@@ -11,23 +12,6 @@
 load this file to load all modules below
 #+begin_src emacs-lisp
   ;;; base.el --- simiple configurable agreeable modular emacs  -*- lexical-binding: t; -*-
-
-  ;; Copyright (C) 2025  Felix Dumbeck
-
-  ;; Author: Felix Dumbeck <felix@dumbeck.net>
-
-  ;; This program is free software; you can redistribute it and/or modify
-  ;; it under the terms of the Lesser GNU General Public License as published by
-  ;; the Free Software Foundation, either version 3 of the License, or
-  ;; (at your option) any later version.
-
-  ;; This program is distributed in the hope that it will be useful,
-  ;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ;; GNU General Public License for more details.
-
-  ;; You should have received a copy of the Lesser GNU General Public License
-  ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
   (add-to-list 'load-path (file-name-directory (or load-file-name buffer-file-name)))
   (load "base/startup.el" nil t)
@@ -96,13 +80,11 @@ prevent Emacs from adding custom settings to init.el and choose =custom.el= inst
 ** general
 #+begin_src emacs-lisp
   (global-visual-line-mode 1)
-  ;; (setq visual-wrap-prefix "⇢ ") ;; choose a visible symbol
+  ;; (setq visual-wrap-prefix "⇢ ") ;choose a visible symbol
   ;; (global-visual-wrap-prefix-mode 1)
-
   (global-visual-line-mode t)
-  (setq-default cursor-type 'bar)	 ;use bar as cursor
-  (setq visible-bell t)		 ;flash screen instead of ringing bell
-  (global-hl-line-mode t)		 ;highlight current line
+  (setq visible-bell t)	       ;flash screen instead of ringing bell
+  (global-hl-line-mode t)	       ;highlight current line
   (setq project-mode-line t)     ;show current project name is mode line
   (setq use-dialog-box nil)      ;disable UI dialogs as prompts
   (pixel-scroll-precision-mode)
@@ -126,9 +108,9 @@ kill the current buffer and close its window/frame with =C-x C-k=
     (delete-window))
   (bind-key "C-x C-k" #'scame/kill-buffer-and-close-window)
 #+end_src
-** join-lines with =C-x C-j=
+** join-lines with =C-x j=
 #+begin_src emacs-lisp
-  (bind-key "C-x C-j" #'join-line)
+  (bind-key "C-x j" #'join-line)
 #+end_src
 ** move current file to trash C-x x x x
 #+begin_src emacs-lisp
@@ -280,19 +262,19 @@ add keybindings for when in eglot-mode (Emacs' built in language-server) inspire
 *** general
 #+begin_src emacs-lisp
   (setq org-startup-indented t
-        ;; org-pretty-entities t
-        org-hide-emphasis-markers t
+        org-pretty-entities t
+        ;; org-hide-emphasis-markers t
         org-startup-with-inline-images t
         org-image-actual-width '(300))
 #+end_src
 *** increase heading and title size
 #+begin_src emacs-lisp
   (custom-set-faces
-   '(org-level-1 ((t (:height 1.75))))
-   '(org-level-2 ((t (:height 1.5))))
+   '(org-level-1 ((t (:height 1.5))))
+   '(org-level-2 ((t (:height 1.35))))
    '(org-level-3 ((t (:height 1.25))))
    '(org-level-4 ((t (:height 1.1))))
-   '(org-document-title ((t (:height 1.5)))))
+   '(org-document-title ((t (:height 1.45)))))
 #+end_src
 ** suggest headings when inserting link
 when inserting a new link to a heading in the current document, an auto completion mini-buffer will pop up, suggesting all headings in the current document. From: [[https://howardism.org/Technical/Emacs/tiddly-wiki-in-org.html][TiddlyWiki In Org]]
@@ -350,6 +332,11 @@ typing =<el= and Tab will expand to an emacs-lisp source block: =#+begin_src ema
 :PROPERTIES:
 :header-args: :tangle base/var.el :results silent :mkdirp yes
 :END:
+** dired search filenames
+isearch searches for only filenames in dired when cursor is on filename
+#+begin_src emacs-lisp
+  (setq dired-isearch-filenames 'dwim)
+#+end_src
 ** projectile custom root
 #+begin_src emacs-lisp
   (setq project-vc-extra-root-markers '(".projectile"))
@@ -508,8 +495,12 @@ save system clipboard (to killring) before killing anything new
     (add-file-local-variable-prop-line 'compile-command command))
 #+end_src
 ** compile-mode: scroll to bottom in compile mode output buffer
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (setq compilation-scroll-output 'first-error)
+#+end_src
+
+#+begin_src emacs-lisp :tangle no
+  (setq compilation-auto-jump-to-first-error t)
 #+end_src
 ** show name of current function
 #+begin_src emacs-lisp
@@ -839,8 +830,10 @@ enable the [[https://melpa.org/#/][melpa]] repository, providing additional pack
 #+begin_src emacs-lisp
   (setq package-install-upgrade-built-in t)
   (require 'package)
-  (use-package use-package-ensure-system-package)
-  (setq use-package-always-ensure t)
+  (use-package use-package-ensure-system-package
+    :ensure nil
+    :config
+    (setq use-package-always-ensure t))
   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
   ;; prefer GNU packages over NONGNU over Melpa
   (customize-set-variable 'package-archive-priorities
