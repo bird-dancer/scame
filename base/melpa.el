@@ -1,13 +1,10 @@
 ;; -*- lexical-binding: t; -*-
-(setq package-install-upgrade-built-in t)
 (require 'package)
-(use-package use-package-ensure-system-package
-  :ensure nil
-  :config
-  (setq use-package-always-ensure t))
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-;; prefer GNU packages over NONGNU over Melpa
-(customize-set-variable 'package-archive-priorities
-			'(("gnu" . 99)
-			  ("nongnu" . 98)
-			  ("melpa" . 97)))
+(setq package-archives '(("melpa"  . "https://melpa.org/packages/")
+                         ("gnu"    . "https://elpa.gnu.org/packages/")
+                         ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
+(package-initialize)
+
+(require 'use-package)
+(setq use-package-always-ensure t)
+(setq package-install-upgrade-built-in t)
