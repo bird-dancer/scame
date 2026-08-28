@@ -77,9 +77,8 @@ export org-mode files to HTML pages using hugo
 enable drag-and-drop support for images and files; inserts inline previews for images and an icon+link for other media types.
 #+begin_src emacs-lisp
   (use-package org-download
-    :after org
-    ;; :hook ((org-mode . org-download-mode))
-    ;; :hook ((dired-mode . org-download-enable))
+    :hook ((org-mode . org-download-enable)
+  	 (dired-mode . org-download-enable))
     :config
     (setq-default org-download-image-dir "./images"))
 #+end_src
@@ -97,6 +96,7 @@ make bullet points and headings look nicer
     :hook (org-mode . org-superstar-mode))
 #+end_src
 ** org-auto-tangle
+
 when ~#+auto_tangle: t~ is set in the beginning of an org-file, tangle all code blocks that are set to tangle when saving
 #+begin_src emacs-lisp
   (use-package org-auto-tangle
@@ -116,46 +116,6 @@ Use different bibliography processors for HTML and latex exports
     ;; turn off font locking for citations so it doesnt lag. can be removed when using citar
     (setq org-cite-activate-processor nil))
 #+end_src
-*** code blocks
-Give code blocks syntax highlighting when exporting to latex.
-#+begin_src emacs-lisp
-  (setq org-src-fontify-natively t
-        org-src-tab-acts-natively t)
-  ;; org-src-preserve-indentation t)
-#+end_src
-#+begin_src emacs-lisp :tangle no
-  (use-package engrave-faces
-    :after org
-    :config
-    (setq org-latex-src-block-backend 'engraved)
-    (add-to-list 'org-latex-packages-alist '("" "float")))
-#+end_src
-#+begin_src emacs-lisp
-  (with-eval-after-load 'org
-    (modify-syntax-entry ?< "." org-mode-syntax-table)
-    (modify-syntax-entry ?> "." org-mode-syntax-table))
-#+end_src
-
-#+begin_src emacs-lisp
-  (setq org-latex-src-block-backend 'minted)
-  (with-eval-after-load 'org
-    (add-to-list 'org-latex-packages-alist '("" "minted")))
-
-  (setq org-latex-minted-options
-        '(("breaklines" "true")          ;; Enables line wrapping
-          ;; ("breakanywhere" "true")       ;; Allows breaking in the middle of long strings/hex values
-          ;; ("style" "tango")              ;; A clean, readable color theme (or try "colorful", "monokai")
-          ;; ("fontsize" "\\footnotesize")  ;; Slightly smaller font to fit more code
-  	("xleftmargin" "-35pt")  ;; Pushes the left border outward (or use negative like "-10pt" to pull it into the margin)
-  	("xrightmargin" "-35pt") ;; Pushes the right border outward
-          ("frame" "single")             ;; Adds a neat box around the code block
-  	;; ("linenos" "true")
-  	;; ("numberstyle" "\\normalsize\\ttfamily")
-  	;; ("numbersep" "10pt")
-  	))
-  ;; Optional: Adds line numbers
-#+end_src
-
 * spell-check
 :PROPERTIES:
 :header-args: :tangle extended/spell-check.el :results silent :mkdirp yes
@@ -218,8 +178,8 @@ pulse highlight line when jumping between buffers etc.
 #+begin_src emacs-lisp
   (use-package pulsar
     :if (display-graphic-p)
-    :config
-    (pulsar-global-mode))
+    :init
+    (pulsar-global-mode t))
 #+end_src
 ** expand-region
 #+begin_src emacs-lisp
@@ -582,7 +542,6 @@ TODO: replace with [[https://github.com/federicotdn/verb][GitHub - federicotdn/v
 better interaction with pdf
 #+begin_src emacs-lisp
   (use-package pdf-tools
-    :ensure t
     :if (display-graphic-p)
     :mode ("\\.pdf\\'" . pdf-view-mode)
     :hook (pdf-view-mode . pdf-isearch-minor-mode))

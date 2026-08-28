@@ -4,8 +4,8 @@
 
 (use-package pulsar
   :if (display-graphic-p)
-  :config
-  (pulsar-global-mode))
+  :init
+  (pulsar-global-mode t))
 
 (use-package expand-region
   :bind ("C-=" . er/expand-region))

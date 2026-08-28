@@ -7,7 +7,6 @@
   :defer t)
 
 (use-package pdf-tools
-  :ensure t
   :if (display-graphic-p)
   :mode ("\\.pdf\\'" . pdf-view-mode)
   :hook (pdf-view-mode . pdf-isearch-minor-mode))
