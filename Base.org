@@ -332,6 +332,14 @@ typing =<el= and Tab will expand to an emacs-lisp source block: =#+begin_src ema
 :PROPERTIES:
 :header-args: :tangle base/var.el :results silent :mkdirp yes
 :END:
+** markdown-ts-mode
+#+begin_src emacs-lisp
+  (use-package markdown-ts-mode
+    :ensure nil
+    :mode ("\\.md\\'" "\\.mdx\\'" "\\.markdown\\'")
+    :config
+    (require 'markdown-ts-mode-x))
+#+end_src
 ** dired search filenames
 isearch searches for only filenames in dired when cursor is on filename
 #+begin_src emacs-lisp

@@ -186,17 +186,6 @@ pulse highlight line when jumping between buffers etc.
   (use-package expand-region
     :bind ("C-=" . er/expand-region))
 #+end_src
-*** tree-sitter
-automatically detect the appropriate tree-sitter mode dependent on the language mode and file type
-#+begin_src emacs-lisp
-  (use-package treesit-auto
-    :custom
-    (treesit-auto-install 'prompt)
-    :config
-    ;; (delete 'rust treesit-auto-langs)
-    (treesit-auto-add-to-auto-mode-alist 'all)
-    (global-treesit-auto-mode))
-#+end_src
 * dired-setting
 :PROPERTIES:
 :header-args: :tangle extended/dired-setting.el :results silent :mkdirp yes
