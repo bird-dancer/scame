@@ -14,7 +14,6 @@
 
 (use-package corfu
   :ensure t
-  :if (display-graphic-p)
   ;; Optional customizations
   :custom
   (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
@@ -62,13 +61,6 @@
   ;; commands are hidden, since they are not used via M-x. This setting is
   ;; useful beyond Corfu.
   (read-extended-command-predicate #'command-completion-default-include-p))
-
-(use-package corfu-terminal
-  :if (not (display-graphic-p))
-  :config
-  (corfu-terminal-mode +1))
-;; (unless (display-graphic-p)
-;;   (corfu-terminal-mode +1)))
 
 (use-package nerd-icons-corfu
   :after corfu
