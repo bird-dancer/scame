@@ -402,8 +402,11 @@ for default completion commands (disabled):
   ;; Option 2: Replace `vertico-insert' to enable TAB prefix expansion.
   ;; (keymap-set vertico-map "TAB" #'minibuffer-complete)
 #+end_src
+
 ** orderless
-improve vertico and corfu completions by allowing matches to search terms differently ordered
+
+Improve vertico and corfu completions by allowing matches to search terms differently ordered
+
 #+begin_src emacs-lisp
   (use-package orderless
     ;; :custom
@@ -420,8 +423,11 @@ improve vertico and corfu completions by allowing matches to search terms differ
     (setq completion-styles '(orderless flex)
           completion-category-overrides '((eglot (styles . (orderless flex))))))
 #+end_src
+
 ** marginalia
-show meta information about vertico completion options (eg. file size, last edited)
+
+Show meta information about vertico completion options (eg. file size, last edited)
+
 #+begin_src emacs-lisp
   (use-package marginalia
     :after vertico
@@ -436,14 +442,18 @@ show meta information about vertico completion options (eg. file size, last edit
     ;; package.
     (marginalia-mode))
 #+end_src
+
 ** vertico show candidate icons
+
 icons for completion options
+
 #+begin_src emacs-lisp :tangle no
   (use-package all-the-icons-completion
     :after (all-the-icons marginalia)
     :init (all-the-icons-completion-mode)
     :hook (marginalia-mode . all-the-icons-completion-marginalia-setup))
 #+end_src
+
 ** consult: for seeing "occurrence-previews" when searching
 #+begin_src emacs-lisp
   (use-package consult
@@ -506,8 +516,10 @@ icons for completion options
 :header-args: :tangle extended/more-packages.el :results silent :mkdirp yes
 :END:
 ** restclient
+
 manually explore and test HTTP REST webservices
 TODO: replace with [[https://github.com/federicotdn/verb][GitHub - federicotdn/verb: HTTP client for Emacs]]
+
 #+begin_src emacs-lisp
   (use-package restclient
     :defer t)
@@ -516,8 +528,11 @@ TODO: replace with [[https://github.com/federicotdn/verb][GitHub - federicotdn/v
   (use-package restclient-jq
     :defer t)
 #+end_src
+
 ** pdf-tools
+
 better interaction with pdf
+
 #+begin_src emacs-lisp
   (use-package pdf-tools
     :if (display-graphic-p)

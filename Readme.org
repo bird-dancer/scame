@@ -56,7 +56,7 @@ this is what my Emacs config looks like:
 #+end_src
 
 * external dependencies
-+ [[file:Base.org][base]]: only GNU Emacs 30.1+ is required.
++ [[file:Base.org][base]]: only GNU Emacs 30.1+ is required. (Although 31.1+ offers more features)
 + =extended/spell-check=: libenchant
 + =extended/git=: git
 + =extended/more-packages=:
