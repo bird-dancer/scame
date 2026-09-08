@@ -5,6 +5,7 @@
 (load "base/startup.el" nil t)
 (load "base/user-interface.el" nil t)
 (load "base/keybindings.el" nil t)
+(load "base/development.el" nil t)
 (load "base/completion.el" nil t)
 (load "base/org-mode.el" nil t)
 (load "base/var.el" nil t)

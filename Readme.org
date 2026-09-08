@@ -45,8 +45,8 @@ this is what my Emacs config looks like:
   (set-frame-font "Comic Shanns Mono 14" nil t)
   (load-theme 'modus-operandi-tinted)
 
-  (setq user-full-name "Felix Dumbeck"
-        user-mail-address "felix@dumbeck.net")
+  (setq user-full-name "Firstname Lastname"
+        user-mail-address "your@email.address")
 
   (setq org-agenda-files
         '("~/uni/notes/uni.org"

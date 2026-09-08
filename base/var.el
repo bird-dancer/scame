@@ -76,8 +76,6 @@ When called interactively, prompt for PATH."
 ;; revert dired and other buffers
 (setq global-auto-revert-non-file-buffers t)
 
-(delete-selection-mode 1)
-
 (setq save-interprogram-paste-before-kill t)
 
 ;;;###autoload
@@ -123,8 +121,6 @@ When called interactively, prompt for PATH."
 ;; usage:
 ;; (with-timer "description"
 ;; 	    (command))
-
-(add-to-list 'auto-mode-alist '("\\Makefile\\..*" . makefile-gmake-mode))
 
 ;; (fset 'yes-or-no-p 'y-or-n-p)
 (setq use-short-answers t)

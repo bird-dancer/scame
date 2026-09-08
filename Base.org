@@ -17,6 +17,7 @@ load this file to load all modules below
   (load "base/startup.el" nil t)
   (load "base/user-interface.el" nil t)
   (load "base/keybindings.el" nil t)
+  (load "base/development.el" nil t)
   (load "base/completion.el" nil t)
   (load "base/org-mode.el" nil t)
   (load "base/var.el" nil t)
@@ -153,24 +154,6 @@ finding syntax errors on the fly, also works with eglot and spellcheck (it also 
   (bind-key "M-n" #'flymake-goto-next-error)
   (bind-key "M-p" #'flymake-goto-prev-error)
 #+end_src
-** eglot
-add keybindings for when in eglot-mode (Emacs' built in language-server) inspired by rust-mode
-#+begin_src emacs-lisp
-  (use-package eglot
-    :defer t
-    :ensure nil
-    :config
-    (setq eglot-events-buffer-size 0) ;disable logging and improve perfomance
-    (define-key eglot-mode-map (kbd "C-c c r") #'eglot-rename)
-    (define-key eglot-mode-map (kbd "C-c c o") #'eglot-code-action-organize-imports)
-    (define-key eglot-mode-map (kbd "C-c c h") #'eldoc)
-    (define-key eglot-mode-map (kbd "C-c c a") #'eglot-code-actions)
-    (define-key eglot-mode-map (kbd "C-c c f") #'eglot-format-buffer)
-    (define-key eglot-mode-map (kbd "C-c c q") #'eglot-code-action-quickfix)
-    (define-key eglot-mode-map (kbd "C-c c e") #'eglot-code-action-extract)
-    (define-key eglot-mode-map (kbd "<f6>") #'xref-find-definitions)
-    (define-key eglot-mode-map (kbd "M-.") #'xref-find-definitions))
-#+end_src
 ** bind M-<backspace> to delete in the search string during isearch (doesnt work)
 #+begin_src emacs-lisp :tangle no
   ;;;###autoload
@@ -186,6 +169,39 @@ add keybindings for when in eglot-mode (Emacs' built in language-server) inspire
   (define-key isearch-mode-map (kbd "M-<backspace>") 'scame/isearch-del-word)
 #+end_src
 
+* development
+:PROPERTIES:
+:header-args: :tangle base/development.el :results silent :mkdirp yes
+:END:
+** auto enable makefile-mode for Makefiles
+#+begin_src emacs-lisp
+  (add-to-list 'auto-mode-alist '("\\Makefile\\..*" . makefile-gmake-mode))
+#+end_src
+** eglot
+add keybindings for when in eglot-mode (Emacs' built in language-server) inspired by rust-mode
+#+begin_src emacs-lisp
+  (use-package eglot
+    :defer t
+    :ensure nil
+    :config
+    (eglot-documentation-renderer 'markdown-ts-view-mode)
+    (eglot-code-action-indications nil)
+    (setq eglot-events-buffer-size 0) ;disable logging and improve perfomance
+    (define-key eglot-mode-map (kbd "C-c c r") #'eglot-rename)
+    (define-key eglot-mode-map (kbd "C-c c o") #'eglot-code-action-organize-imports)
+    (define-key eglot-mode-map (kbd "C-c c h") #'eldoc)
+    (define-key eglot-mode-map (kbd "C-c c a") #'eglot-code-actions)
+    (define-key eglot-mode-map (kbd "C-c c f") #'eglot-format-buffer)
+    (define-key eglot-mode-map (kbd "C-c c q") #'eglot-code-action-quickfix)
+    (define-key eglot-mode-map (kbd "C-c c e") #'eglot-code-action-extract)
+    (define-key eglot-mode-map (kbd "<f6>") #'xref-find-definitions)
+    (define-key eglot-mode-map (kbd "M-.") #'xref-find-definitions))
+#+end_src
+** treesit-auto
+#+begin_src emacs-lisp
+  (setq treesit-auto-install-grammar 'always)
+  (setq treesit-enabled-modes t)
+#+end_src
 * completion
 :PROPERTIES:
 :header-args: :tangle base/completion.el :results silent :mkdirp yes
@@ -340,6 +356,7 @@ typing =<el= and Tab will expand to an emacs-lisp source block: =#+begin_src ema
     :config
     (require 'markdown-ts-mode-x))
 #+end_src
+
 ** dired search filenames
 isearch searches for only filenames in dired when cursor is on filename
 #+begin_src emacs-lisp
@@ -445,11 +462,6 @@ the default trash dir is the xdg freedesktop location
   ;; revert dired and other buffers
   (setq global-auto-revert-non-file-buffers t)
 #+end_src
-** replace selection when typing
-typed text replaces the selection if the selection is active, pressing delete or backspace deletes the selection
-#+begin_src emacs-lisp
-  (delete-selection-mode 1)
-#+end_src
 ** don't overwrite system clipboard
 save system clipboard (to killring) before killing anything new
 #+begin_src emacs-lisp
@@ -523,10 +535,6 @@ save system clipboard (to killring) before killing anything new
   ;; usage:
   ;; (with-timer "description"
   ;; 	    (command))
-#+end_src
-** auto enable makefile-mode for Makefiles
-#+begin_src emacs-lisp
-  (add-to-list 'auto-mode-alist '("\\Makefile\\..*" . makefile-gmake-mode))
 #+end_src
 ** y-or-n-p makes answering questions faster
 #+begin_src emacs-lisp
@@ -691,7 +699,7 @@ echo "*" ? >> strings.org; >> strings.org; strings ? >> strings.org
 
 ** copy current address to clipboard
 #+begin_src emacs-lisp
-    ;;;###autoload
+  ;;;###autoload
   (defun scame/hexl-copy-current-address ()
     (interactive)
     (let ((select-enable-clipboard t)
@@ -800,7 +808,7 @@ needs to be run everytime .shellrc file is updated
 :PROPERTIES:
 :header-args: :tangle base/editor-config.el :results silent :mkdirp yes
 :END:
-** replace selection
+** replace selection when typing
 typed text replaces the selection if the selection is active, pressing delete or backspace deletes the selection
 #+begin_src emacs-lisp
   (delete-selection-mode 1)
