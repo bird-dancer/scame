@@ -1,19 +1,17 @@
 ;; -*- lexical-binding: t; -*-
+(use-package treesit-auto
+  :config
+  (global-treesit-auto-mode))
+
 (use-package nix-ts-mode
   :mode ("\\.nix\\'" . nix-ts-mode))
 
-(use-package gleam-ts-mode
-  :mode ("\\.gleam\\'" . gleam-ts-mode))
-(with-eval-after-load 'eglot
-  (add-to-list 'eglot-server-programs
-       	       '(gleam-ts-mode . ("gleam" "lsp"))))
+(use-package rust-mode
+  :mode ("\\.rs\\'" . rust-mode)
+  :init
+  (setq rust-mode-treesitter-derive t))
 
-(with-eval-after-load 'eglot
-  (add-to-list 'eglot-server-programs
-    	       '(erlang-ts-mode . ("elp" "server"))))
-(with-eval-after-load 'eglot
-  (add-to-list 'eglot-server-programs
-     	       '(erlang-mode . ("elp" "server"))))
+(use-package gleam-ts-mode)
 
 (use-package eglot-java
   :defer t)

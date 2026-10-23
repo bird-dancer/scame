@@ -476,27 +476,27 @@ icons for completion options
 :PROPERTIES:
 :header-args: :tangle extended/development.el :results silent :mkdirp yes
 :END:
+** automatically use respective ts-mode for most languages
+#+begin_src emacs-lisp
+  (use-package treesit-auto
+    :config
+    (global-treesit-auto-mode))
+#+end_src
 ** nix-ts-mode
 #+begin_src emacs-lisp
   (use-package nix-ts-mode
     :mode ("\\.nix\\'" . nix-ts-mode))
 #+end_src
+** rust
+#+begin_src emacs-lisp
+  (use-package rust-mode
+    :mode ("\\.rs\\'" . rust-mode)
+    :init
+    (setq rust-mode-treesitter-derive t))
+#+end_src
 ** gleam
 #+begin_src emacs-lisp
-  (use-package gleam-ts-mode
-    :mode ("\\.gleam\\'" . gleam-ts-mode))
-  (with-eval-after-load 'eglot
-    (add-to-list 'eglot-server-programs
-         	       '(gleam-ts-mode . ("gleam" "lsp"))))
-#+end_src
-** erlang
-#+begin_src emacs-lisp
-  (with-eval-after-load 'eglot
-    (add-to-list 'eglot-server-programs
-      	       '(erlang-ts-mode . ("elp" "server"))))
-  (with-eval-after-load 'eglot
-    (add-to-list 'eglot-server-programs
-       	       '(erlang-mode . ("elp" "server"))))
+  (use-package gleam-ts-mode)
 #+end_src
 ** java
 #+begin_src emacs-lisp
@@ -545,4 +545,3 @@ better interaction with pdf
   ;;   :load-path "~/.guix-profile/share/emacs/site-lisp/pdf-tools-1.1.0"
   ;;   :mode ("\\.pdf\\'" . pdf-view-mode))
 #+end_src
-
