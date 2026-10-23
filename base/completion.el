@@ -10,4 +10,7 @@
 (setq read-buffer-completion-ignore-case t) ;when switching buffers
 (setq read-file-name-completion-ignore-case t) ;when finding file
 
+(setq completion-ignored-extensions
+      (delete ".bin" completion-ignored-extensions))
+
 (global-completion-preview-mode t)

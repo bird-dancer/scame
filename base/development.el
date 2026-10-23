@@ -33,5 +33,7 @@
 	 ("<f6>" . xref-find-definitions)
 	 ("M-." . xref-find-definitions)))
 
+(add-to-list 'auto-mode-alist '("\\.py\\'" . python-ts-mode))
+
 (setq treesit-auto-install-grammar 'always)
 (setq treesit-enabled-modes t)
