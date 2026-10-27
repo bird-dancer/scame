@@ -57,9 +57,9 @@
   (keymap-set minibuffer-local-map "C-r" 'consult-history)
   (setq completion-in-region-function #'consult-completion-in-region))
 
-(defun consult-ripgrep-current-dir (&optional dir)
+(defun scame/consult-ripgrep-current-dir (&optional dir)
   "Search using consult-ripgrep in the specified DIR or current directory."
   (interactive "P")
   (consult-ripgrep (or dir default-directory)))
 
-(bind-key "C-c M-r" #'consult-ripgrep-current-dir)
+(bind-key "C-c M-r" #'scame/consult-ripgrep-current-dir)

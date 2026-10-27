@@ -409,12 +409,12 @@ isearch searches for only filenames in dired when cursor is on filename
 #+end_src
 #+begin_src emacs-lisp
   ;;;###autoload
-  (defun touch-file (path)
+  (defun scame/touch-file (path)
     "Create PATH if it doesn't exist, or update its modification time to now.
   When called interactively, prompt for PATH."
     (interactive "FTouch file: ")
     (if (file-exists-p path)
-        (set-file-times path)                 ; update mtime to now
+        (set-file-times path)		; update mtime to now
       (with-temp-buffer
         (write-region (point-min) (point-min) path))) ; create empty file
     path)
@@ -423,7 +423,7 @@ isearch searches for only filenames in dired when cursor is on filename
   ;;;###autoload
   (defun scame/projectile-init ()
     (interactive)
-    (touch-file ".projectile"))
+    (scame/touch-file ".projectile"))
 #+end_src
 ** use tramp specific history
 #+begin_src emacs-lisp :tangle no
@@ -550,7 +550,7 @@ save system clipboard (to killring) before killing anything new
 ** add-compile-command function
 #+begin_src emacs-lisp
   ;;;###autoload
-  (defun add-compile-command (command)
+  (defun scame/add-compile-command (command)
     "add file variable with compile command"
     (interactive "sCommand: ")
     (add-file-local-variable-prop-line 'compile-command command))

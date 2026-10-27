@@ -10,12 +10,12 @@
 (setq project-vc-extra-root-markers '(".projectile"))
 
 ;;;###autoload
-(defun touch-file (path)
+(defun scame/touch-file (path)
   "Create PATH if it doesn't exist, or update its modification time to now.
 When called interactively, prompt for PATH."
   (interactive "FTouch file: ")
   (if (file-exists-p path)
-      (set-file-times path)                 ; update mtime to now
+      (set-file-times path)		; update mtime to now
     (with-temp-buffer
       (write-region (point-min) (point-min) path))) ; create empty file
   path)
@@ -23,7 +23,7 @@ When called interactively, prompt for PATH."
 ;;;###autoload
 (defun scame/projectile-init ()
   (interactive)
-  (touch-file ".projectile"))
+  (scame/touch-file ".projectile"))
 
 (which-key-mode t)
 
@@ -107,7 +107,7 @@ When called interactively, prompt for PATH."
 (setq scroll-conservatively 0)
 
 ;;;###autoload
-(defun add-compile-command (command)
+(defun scame/add-compile-command (command)
   "add file variable with compile command"
   (interactive "sCommand: ")
   (add-file-local-variable-prop-line 'compile-command command))
