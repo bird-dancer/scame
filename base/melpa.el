@@ -7,4 +7,4 @@
 
 (require 'use-package)
 (setq use-package-always-ensure t)
-(setq package-install-upgrade-built-in t)
+;; (setq package-install-upgrade-built-in t)
