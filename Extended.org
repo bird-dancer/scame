@@ -495,7 +495,7 @@ icons for completion options
     (setq rust-mode-treesitter-derive t))
 #+end_src
 ** gleam
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package gleam-ts-mode)
 #+end_src
 ** java
@@ -539,6 +539,8 @@ better interaction with pdf
     :if (display-graphic-p)
     :mode ("\\.pdf\\'" . pdf-view-mode)
     :hook (pdf-view-mode . pdf-isearch-minor-mode))
+  (use-package saveplace-pdf-view
+    :after pdf-tools)
   ;; (use-package pdf-tools
   ;;   :if (file-directory-p "~/.guix-profile/share/emacs/site-lisp") ;only install on guix system
   ;;   :ensure nil

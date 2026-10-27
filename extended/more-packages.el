@@ -10,6 +10,8 @@
   :if (display-graphic-p)
   :mode ("\\.pdf\\'" . pdf-view-mode)
   :hook (pdf-view-mode . pdf-isearch-minor-mode))
+(use-package saveplace-pdf-view
+  :after pdf-tools)
 ;; (use-package pdf-tools
 ;;   :if (file-directory-p "~/.guix-profile/share/emacs/site-lisp") ;only install on guix system
 ;;   :ensure nil
