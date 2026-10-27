@@ -12,8 +12,8 @@
 (setq org-agenda-start-on-weekday nil)
 
 (with-eval-after-load 'org-agenda
-    (setf (alist-get 'agenda org-agenda-prefix-format)
-	  "  %i %-12:c%?-12t% s%b"))
+  (setf (alist-get 'agenda org-agenda-prefix-format)
+	"  %i %-12:c%?-12t% s%b"))
 
 ;;;###autoload
 (defun scame/transform-comments (backend)

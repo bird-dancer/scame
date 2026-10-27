@@ -495,7 +495,7 @@ icons for completion options
     (setq rust-mode-treesitter-derive t))
 #+end_src
 ** gleam
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
   (use-package gleam-ts-mode)
 #+end_src
 ** java
